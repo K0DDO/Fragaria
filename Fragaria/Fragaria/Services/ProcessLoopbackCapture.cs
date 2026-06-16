@@ -120,15 +120,13 @@ internal static class AudioSessionMatcher
         {
             var enumerator = new MMDeviceEnumerator();
             var device = enumerator.GetDefaultAudioEndpoint(DataFlow.Render, Role.Multimedia);
-            var manager = device.AudioSessionManager2;
-            var sessions = manager.Sessions;
-
+            var manager = device.AudioSessionManager;
             AudioSessionControl? best = null;
             var bestScore = 0;
 
-            for (int i = 0; i < sessions.Count; i++)
+            for (int i = 0; i < manager.SessionCount; i++)
             {
-                var session = sessions[i];
+                var session = manager.GetSession(i);
                 if (session.GetProcessID != processId)
                     continue;
 

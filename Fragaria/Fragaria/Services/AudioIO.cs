@@ -71,7 +71,7 @@ public sealed class BusOutput : IDisposable
         else
             device = enumerator.GetDefaultAudioEndpoint(DataFlow.Render, Role.Multimedia);
 
-        _output = new WasapiOut(device, AudioClientShareMode.Shared, 50);
+        _output = new WasapiOut(device, AudioClientShareMode.Shared, false, 50);
         _output.Init(_buffer!);
         _output.Play();
     }

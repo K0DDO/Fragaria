@@ -6,6 +6,7 @@ using Fragaria.Models;
 using Fragaria.Services;
 using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml.Media.Imaging;
+using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Storage.Streams;
 
 namespace Fragaria.ViewModels;

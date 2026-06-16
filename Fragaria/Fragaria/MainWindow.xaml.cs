@@ -54,14 +54,15 @@ public sealed partial class MainWindow : Window
 
         WindowPicker.WindowSelected += hwnd => _vm.AddWindow(hwnd);
 
-        NoiseGateToggle.Toggled += (_, e) => _vm.NoiseGateEnabled = e.ToggleSwitch.IsOn;
-        DuckingToggle.Toggled += (_, e) => _vm.DuckingEnabled = e.ToggleSwitch.IsOn;
-        ObsToggle.Toggled += (_, e) =>
+        NoiseGateToggle.Toggled += (s, _) => _vm.NoiseGateEnabled = ((ToggleSwitch)s!).IsOn;
+        DuckingToggle.Toggled += (s, _) => _vm.DuckingEnabled = ((ToggleSwitch)s!).IsOn;
+        ObsToggle.Toggled += (s, _) =>
         {
-            _vm.ObsEnabled = e.ToggleSwitch.IsOn;
+            var on = ((ToggleSwitch)s!).IsOn;
+            _vm.ObsEnabled = on;
             if (_obs != null)
             {
-                if (e.ToggleSwitch.IsOn) _ = _obs.ConnectAsync();
+                if (on) _ = _obs.ConnectAsync();
                 else _ = _obs.DisconnectAsync();
             }
         };
