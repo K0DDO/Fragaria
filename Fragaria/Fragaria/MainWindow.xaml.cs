@@ -56,15 +56,13 @@ public sealed partial class MainWindow : Window
 
         NoiseGateToggle.Toggled += (s, _) => _vm.NoiseGateEnabled = ((ToggleSwitch)s!).IsOn;
         DuckingToggle.Toggled += (s, _) => _vm.DuckingEnabled = ((ToggleSwitch)s!).IsOn;
-        ObsToggle.Toggled += (s, _) =>
+        ObsToggle.Toggled += async (s, _) =>
         {
             var on = ((ToggleSwitch)s!).IsOn;
             _vm.ObsEnabled = on;
-            if (_obs != null)
-            {
-                if (on) _ = _obs.ConnectAsync();
-                else _ = _obs.DisconnectAsync();
-            }
+            if (_obs == null) return;
+            if (on) await _obs.ConnectAsync();
+            else await _obs.DisconnectAsync();
         };
 
         _vm.StartEngine();
