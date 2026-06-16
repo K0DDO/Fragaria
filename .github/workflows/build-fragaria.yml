@@ -30,14 +30,22 @@ jobs:
         working-directory: Fragaria
         shell: pwsh
         run: |
-          dotnet publish Fragaria\Fragaria.csproj `
-            -c Release `
-            -r win-x64 `
-            --self-contained true `
-            -p:WindowsAppSDKSelfContained=true `
-            -p:DisableMrtCoreCompilation=true `
-            -p:EnableMsixTooling=false `
-            -o dist\Fragaria
+          $msbuild = "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\MSBuild\Current\Bin\MSBuild.exe"
+          if (-not (Test-Path $msbuild)) {
+            $msbuild = "C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Current\Bin\MSBuild.exe"
+          }
+          Write-Host "Using MSBuild: $msbuild"
+          & $msbuild Fragaria\Fragaria.csproj `
+            /restore `
+            /t:Publish `
+            /p:Configuration=Release `
+            /p:Platform=x64 `
+            /p:RuntimeIdentifier=win-x64 `
+            /p:SelfContained=true `
+            /p:WindowsAppSDKSelfContained=true `
+            /p:EnableMsixTooling=false `
+            /p:DisableMrtCoreCompilation=true `
+            /p:PublishDir="$pwd\dist\Fragaria\"
 
       - name: Install Inno Setup 6
         shell: pwsh
