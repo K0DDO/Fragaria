@@ -12,6 +12,9 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <WindowsPackageType>None</WindowsPackageType>
     <WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
+    <EnableMsixTooling>false</EnableMsixTooling>
+    <GenerateAppxPackageOnBuild>false</GenerateAppxPackageOnBuild>
+    <DisableMrtCoreCompilation>true</DisableMrtCoreCompilation>
     <EnableWindowsForms>true</EnableWindowsForms>
     <PublishReadyToRun>true</PublishReadyToRun>
     <WindowsSdkPackageVersion>10.0.26100.38</WindowsSdkPackageVersion>
