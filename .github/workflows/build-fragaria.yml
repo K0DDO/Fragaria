@@ -22,6 +22,7 @@ jobs:
 
       - name: Publish Fragaria (self-contained)
         working-directory: Fragaria
+        shell: pwsh
         run: |
           dotnet publish Fragaria\Fragaria.csproj `
             -c Release `
@@ -30,11 +31,20 @@ jobs:
             -p:WindowsAppSDKSelfContained=true `
             -o dist\Fragaria
 
-      - name: Compile installer (Inno Setup)
-        uses: amake/innosetup-compiler@v1.0.0
-        with:
-          path: Fragaria/installer/Fragaria.iss
-          options: /OFragaria/dist
+      - name: Install Inno Setup 6
+        shell: pwsh
+        run: |
+          choco install innosetup --no-progress -y
+          $iscc = "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe"
+          if (-not (Test-Path $iscc)) {
+            throw "ISCC.exe not found at $iscc"
+          }
+          "ISCC=$iscc" >> $env:GITHUB_ENV
+
+      - name: Compile installer
+        shell: pwsh
+        run: |
+          & $env:ISCC "Fragaria\installer\Fragaria.iss" /OFragaria\dist
 
       - name: Upload portable build
         uses: actions/upload-artifact@v4
