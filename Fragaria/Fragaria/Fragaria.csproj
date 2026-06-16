@@ -15,6 +15,7 @@
     <EnableMsixTooling>false</EnableMsixTooling>
     <GenerateAppxPackageOnBuild>false</GenerateAppxPackageOnBuild>
     <DisableMrtCoreCompilation>true</DisableMrtCoreCompilation>
+    <EnableCoreMrtTooling>false</EnableCoreMrtTooling>
     <EnableWindowsForms>true</EnableWindowsForms>
     <PublishReadyToRun>true</PublishReadyToRun>
     <WindowsSdkPackageVersion>10.0.26100.38</WindowsSdkPackageVersion>
