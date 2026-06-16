@@ -30,12 +30,15 @@ jobs:
         working-directory: Fragaria
         shell: pwsh
         run: |
-          $msbuild = "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\MSBuild\Current\Bin\MSBuild.exe"
-          if (-not (Test-Path $msbuild)) {
-            $msbuild = "C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Current\Bin\MSBuild.exe"
-          }
+          $candidates = @(
+            "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\MSBuild\Current\Bin\MSBuild.exe",
+            "C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Current\Bin\MSBuild.exe",
+            "C:\Program Files\Microsoft Visual Studio\2022\Professional\MSBuild\Current\Bin\MSBuild.exe"
+          )
+          $msbuild = $candidates | Where-Object { Test-Path $_ } | Select-Object -First 1
+          if (-not $msbuild) { throw "MSBuild.exe not found" }
           Write-Host "Using MSBuild: $msbuild"
-          & $msbuild Fragaria\Fragaria.csproj `
+          & "$msbuild" Fragaria\Fragaria.csproj `
             /restore `
             /t:Publish `
             /p:Configuration=Release `
