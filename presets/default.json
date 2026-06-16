@@ -1,0 +1,7 @@
+{
+  "master_hp": 100,
+  "master_stream": 85,
+  "master_hp_limit": 100,
+  "master_stream_limit": 90,
+  "strips": {}
+}

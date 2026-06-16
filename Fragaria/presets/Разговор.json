@@ -1,0 +1,8 @@
+{
+  "Name": "Разговор",
+  "MasterHeadphones": 0.9,
+  "MasterStream": 1.0,
+  "MasterHeadphonesLimit": 1.0,
+  "MasterStreamLimit": 0.95,
+  "Strips": []
+}

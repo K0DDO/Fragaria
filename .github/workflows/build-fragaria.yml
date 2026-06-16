@@ -1,0 +1,53 @@
+name: Build Fragaria Installer
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main, master]
+    paths:
+      - 'Fragaria/**'
+      - '.github/workflows/build-fragaria.yml'
+
+jobs:
+  build-installer:
+    runs-on: windows-latest
+    defaults:
+      run:
+        working-directory: Fragaria
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET 8
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Publish Fragaria (self-contained)
+        run: |
+          dotnet publish Fragaria\Fragaria.csproj `
+            -c Release `
+            -r win-x64 `
+            --self-contained true `
+            -p:WindowsAppSDKSelfContained=true `
+            -o dist\Fragaria
+
+      - name: Compile installer (Inno Setup)
+        uses: amake/innosetup-compiler@v1.0.0
+        with:
+          path: installer/Fragaria.iss
+          options: /Odist
+
+      - name: Upload portable build
+        uses: actions/upload-artifact@v4
+        with:
+          name: Fragaria-portable
+          path: Fragaria/dist/Fragaria/
+          retention-days: 30
+
+      - name: Upload installer
+        uses: actions/upload-artifact@v4
+        with:
+          name: FragariaSetup
+          path: Fragaria/dist/FragariaSetup.exe
+          retention-days: 90

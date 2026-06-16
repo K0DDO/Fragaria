@@ -1,0 +1,8 @@
+{
+  "Name": "Игра",
+  "MasterHeadphones": 1.0,
+  "MasterStream": 0.7,
+  "MasterHeadphonesLimit": 1.0,
+  "MasterStreamLimit": 0.85,
+  "Strips": []
+}

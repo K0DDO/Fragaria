@@ -1,0 +1,8 @@
+{
+  "Name": "Стрим",
+  "MasterHeadphones": 0.75,
+  "MasterStream": 1.0,
+  "MasterHeadphonesLimit": 0.9,
+  "MasterStreamLimit": 0.9,
+  "Strips": []
+}

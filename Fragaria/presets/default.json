@@ -1,0 +1,8 @@
+{
+  "Name": "default",
+  "MasterHeadphones": 1.0,
+  "MasterStream": 0.85,
+  "MasterHeadphonesLimit": 1.0,
+  "MasterStreamLimit": 0.9,
+  "Strips": []
+}
