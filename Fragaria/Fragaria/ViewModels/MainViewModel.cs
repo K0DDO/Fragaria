@@ -193,18 +193,18 @@ public sealed partial class MainViewModel : ObservableObject
         });
     }
 
-    partial void OnMasterHpChanged(double v) => _engine.Headphones.Volume = (float)(v / 100);
-    partial void OnMasterStreamChanged(double v) => _engine.Stream.Volume = (float)(v / 100);
-    partial void OnMasterHpLimitChanged(double v) => _engine.Headphones.Limit = (float)(v / 100);
-    partial void OnMasterStreamLimitChanged(double v) => _engine.Stream.Limit = (float)(v / 100);
+    partial void OnMasterHpChanged(double value) => _engine.Headphones.Volume = (float)(value / 100);
+    partial void OnMasterStreamChanged(double value) => _engine.Stream.Volume = (float)(value / 100);
+    partial void OnMasterHpLimitChanged(double value) => _engine.Headphones.Limit = (float)(value / 100);
+    partial void OnMasterStreamLimitChanged(double value) => _engine.Stream.Limit = (float)(value / 100);
 
-    partial void OnNoiseGateEnabledChanged(bool v) { Settings.NoiseGate.Enabled = v; SaveSettings(); }
-    partial void OnNoiseGateThresholdChanged(double v) { Settings.NoiseGate.Threshold = (float)(v / 100); SaveSettings(); }
-    partial void OnDuckingEnabledChanged(bool v) { Settings.Ducking.Enabled = v; SaveSettings(); }
-    partial void OnDuckingAmountChanged(double v) { Settings.Ducking.Amount = (float)(v / 100); SaveSettings(); }
-    partial void OnObsEnabledChanged(bool v) { Settings.Obs.Enabled = v; SaveSettings(); }
-    partial void OnRecordHeadphonesChanged(bool v) { Settings.Recording.RecordHeadphones = v; SaveSettings(); }
-    partial void OnRecordStreamChanged(bool v) { Settings.Recording.RecordStream = v; SaveSettings(); }
+    partial void OnNoiseGateEnabledChanged(bool value) { Settings.NoiseGate.Enabled = value; SaveSettings(); }
+    partial void OnNoiseGateThresholdChanged(double value) { Settings.NoiseGate.Threshold = (float)(value / 100); SaveSettings(); }
+    partial void OnDuckingEnabledChanged(bool value) { Settings.Ducking.Enabled = value; SaveSettings(); }
+    partial void OnDuckingAmountChanged(double value) { Settings.Ducking.Amount = (float)(value / 100); SaveSettings(); }
+    partial void OnObsEnabledChanged(bool value) { Settings.Obs.Enabled = value; SaveSettings(); }
+    partial void OnRecordHeadphonesChanged(bool value) { Settings.Recording.RecordHeadphones = value; SaveSettings(); }
+    partial void OnRecordStreamChanged(bool value) { Settings.Recording.RecordStream = value; SaveSettings(); }
 
     partial void OnAutoStartChanged(bool value)
     {
