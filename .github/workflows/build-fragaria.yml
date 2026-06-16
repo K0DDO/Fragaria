@@ -18,7 +18,11 @@ jobs:
       - name: Setup .NET 8
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: '8.0.x'
+          dotnet-version: '8.0.406'
+
+      - name: Verify .NET SDK
+        shell: pwsh
+        run: dotnet --version
 
       - name: Publish Fragaria (self-contained)
         working-directory: Fragaria
