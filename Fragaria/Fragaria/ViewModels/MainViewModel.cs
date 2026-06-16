@@ -56,27 +56,27 @@ public sealed partial class StripViewModel : ObservableObject
     [ObservableProperty] private BitmapImage? _icon;
     public float[] Spectrum { get; } = new float[32];
 
-    partial void OnHeadphonesPercentChanged(double v) { _strip.HeadphonesVolume = (float)(v / 100); _onChanged(); }
-    partial void OnStreamPercentChanged(double v) { _strip.StreamVolume = (float)(v / 100); _onChanged(); }
-    partial void OnHeadphonesLimitPercentChanged(double v)
+    partial void OnHeadphonesPercentChanged(double value) { _strip.HeadphonesVolume = (float)(value / 100); _onChanged(); }
+    partial void OnStreamPercentChanged(double value) { _strip.StreamVolume = (float)(value / 100); _onChanged(); }
+    partial void OnHeadphonesLimitPercentChanged(double value)
     {
-        _strip.HeadphonesLimit = (float)(v / 100);
-        if (_strip.HeadphonesVolume > _strip.HeadphonesLimit) HeadphonesPercent = v;
+        _strip.HeadphonesLimit = (float)(value / 100);
+        if (_strip.HeadphonesVolume > _strip.HeadphonesLimit) HeadphonesPercent = value;
         _onChanged();
     }
-    partial void OnStreamLimitPercentChanged(double v)
+    partial void OnStreamLimitPercentChanged(double value)
     {
-        _strip.StreamLimit = (float)(v / 100);
-        if (_strip.StreamVolume > _strip.StreamLimit) StreamPercent = v;
+        _strip.StreamLimit = (float)(value / 100);
+        if (_strip.StreamVolume > _strip.StreamLimit) StreamPercent = value;
         _onChanged();
     }
-    partial void OnMutedChanged(bool v) { _strip.Muted = v; _onChanged(); }
-    partial void OnDuckableChanged(bool v) { _strip.Duckable = v; _onChanged(); }
-    partial void OnEqLowChanged(double v) { _strip.Eq.LowDb = (float)v; _onChanged(); }
-    partial void OnEqMidChanged(double v) { _strip.Eq.MidDb = (float)v; _onChanged(); }
-    partial void OnEqHighChanged(double v) { _strip.Eq.HighDb = (float)v; _onChanged(); }
-    partial void OnCompThresholdChanged(double v) { _strip.Compressor.ThresholdDb = (float)v; _onChanged(); }
-    partial void OnCompRatioChanged(double v) { _strip.Compressor.Ratio = (float)v; _onChanged(); }
+    partial void OnMutedChanged(bool value) { _strip.Muted = value; _onChanged(); }
+    partial void OnDuckableChanged(bool value) { _strip.Duckable = value; _onChanged(); }
+    partial void OnEqLowChanged(double value) { _strip.Eq.LowDb = (float)value; _onChanged(); }
+    partial void OnEqMidChanged(double value) { _strip.Eq.MidDb = (float)value; _onChanged(); }
+    partial void OnEqHighChanged(double value) { _strip.Eq.HighDb = (float)value; _onChanged(); }
+    partial void OnCompThresholdChanged(double value) { _strip.Compressor.ThresholdDb = (float)value; _onChanged(); }
+    partial void OnCompRatioChanged(double value) { _strip.Compressor.Ratio = (float)value; _onChanged(); }
 
     public void UpdatePeaks(float hp, float st) { PeakHp = hp * 100; PeakStream = st * 100; }
     public void UpdateSpectrum(float[] bands) => Array.Copy(bands, Spectrum, Math.Min(bands.Length, 32));
