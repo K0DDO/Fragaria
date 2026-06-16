@@ -8,27 +8,26 @@ namespace Fragaria.Services;
 /// Per-process audio capture using Windows 10 2004+ Process Loopback API.
 /// Each window strip maps HWND → PID and captures only that process tree.
 /// </summary>
-public sealed class ProcessAudioCapture : IWaveIn, IDisposable
+public sealed class ProcessAudioCapture : IDisposable
 {
-    private readonly uint _processId;
+    private WasapiCapture? _capture;
     private WasapiLoopbackCapture? _fallback;
     private IWaveIn? _active;
     private bool _disposed;
 
     public ProcessAudioCapture(uint processId, string windowTitle)
     {
-        _processId = processId;
+        ProcessId = processId;
         WindowTitle = windowTitle;
 
         if (ProcessLoopbackActivator.TryCreate(processId, out var device))
         {
-            var cap = new WasapiCapture(device) { ShareMode = AudioClientShareMode.Shared };
-            _active = cap;
-            WaveFormat = cap.WaveFormat;
+            _capture = new WasapiCapture(device) { ShareMode = AudioClientShareMode.Shared };
+            _active = _capture;
+            WaveFormat = _capture.WaveFormat;
         }
         else
         {
-            // Session title match for browser tabs / multi-session apps
             var session = AudioSessionMatcher.FindBestSession(processId, windowTitle);
             if (session != null)
             {
@@ -47,14 +46,12 @@ public sealed class ProcessAudioCapture : IWaveIn, IDisposable
         _active.DataAvailable += (_, e) => DataAvailable?.Invoke(this, e);
     }
 
+    public uint ProcessId { get; }
     public string WindowTitle { get; }
     public uint? ProcessFilterPid { get; }
     public WaveFormat WaveFormat { get; }
 
     public event EventHandler<WaveInEventArgs>? DataAvailable;
-#pragma warning disable CS0067
-    public event EventHandler<StoppedEventArgs>? RecordingStopped;
-#pragma warning restore CS0067
 
     public void StartRecording() => _active?.StartRecording();
     public void StopRecording() => _active?.StopRecording();
@@ -63,6 +60,7 @@ public sealed class ProcessAudioCapture : IWaveIn, IDisposable
     {
         if (_disposed) return;
         _disposed = true;
+        _capture?.Dispose();
         _active?.Dispose();
         _fallback?.Dispose();
     }

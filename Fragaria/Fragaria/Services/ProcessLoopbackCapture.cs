@@ -173,19 +173,23 @@ internal static class AudioSessionMatcher
 internal sealed class SessionWaveIn : IWaveIn
 {
     private readonly WasapiLoopbackCapture _loopback;
-    private readonly uint _processId;
 
     public SessionWaveIn(AudioSessionControl session, MMDevice device)
     {
-        _processId = session.GetProcessID;
+        _ = session;
         _loopback = new WasapiLoopbackCapture(device);
+        _loopback.DataAvailable += (_, e) => DataAvailable?.Invoke(this, e);
+        _loopback.RecordingStopped += (_, e) => RecordingStopped?.Invoke(this, e);
     }
 
-    public WaveFormat WaveFormat => _loopback.WaveFormat;
+    public WaveFormat WaveFormat
+    {
+        get => _loopback.WaveFormat;
+        set => _loopback.WaveFormat = value;
+    }
 
-#pragma warning disable CS0067
     public event EventHandler<WaveInEventArgs>? DataAvailable;
-#pragma warning restore CS0067
+    public event EventHandler<StoppedEventArgs>? RecordingStopped;
 
     public void StartRecording() => _loopback.StartRecording();
     public void StopRecording() => _loopback.StopRecording();
