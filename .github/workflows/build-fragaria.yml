@@ -11,18 +11,16 @@ on:
 jobs:
   build-installer:
     runs-on: windows-latest
-    timeout-minutes: 60
+    timeout-minutes: 30
 
     steps:
       - uses: actions/checkout@v4
 
       - uses: microsoft/setup-msbuild@v2
 
-      - name: Install VS Build Tools for WinUI
-        shell: pwsh
-        run: |
-          choco install visualstudio2022buildtools -y --no-progress `
-            --package-parameters "--passive --norestart --add Microsoft.VisualStudio.Workload.ManagedDesktopBuildTools --add Microsoft.VisualStudio.ComponentGroup.WindowsAppSDK.Cs --includeRecommended"
+      - uses: ilammy/setup-msvc-dev-cmd@v1
+        with:
+          arch: x64
 
       - name: Setup .NET 8
         uses: actions/setup-dotnet@v4
@@ -35,33 +33,19 @@ jobs:
 
       - name: Publish Fragaria (self-contained)
         working-directory: Fragaria
-        shell: pwsh
+        shell: cmd
         run: |
-          $msbuildCandidates = @(
-            "${env:ProgramFiles(x86)}\Microsoft Visual Studio\2022\BuildTools\MSBuild\Current\Bin\MSBuild.exe",
-            "${env:ProgramFiles}\Microsoft Visual Studio\2022\BuildTools\MSBuild\Current\Bin\MSBuild.exe",
-            "${env:ProgramFiles(x86)}\Microsoft Visual Studio\2022\Enterprise\MSBuild\Current\Bin\MSBuild.exe",
-            "${env:ProgramFiles(x86)}\Microsoft Visual Studio\2022\Community\MSBuild\Current\Bin\MSBuild.exe",
-            "${env:ProgramFiles(x86)}\Microsoft Visual Studio\2022\Professional\MSBuild\Current\Bin\MSBuild.exe"
-          )
-          $msbuild = $msbuildCandidates | Where-Object { Test-Path $_ } | Select-Object -First 1
-          if (-not $msbuild) {
-            Write-Error "MSBuild.exe not found"
-            Get-ChildItem "${env:ProgramFiles(x86)}\Microsoft Visual Studio\2022" -Recurse -Filter MSBuild.exe -ErrorAction SilentlyContinue | Select-Object -First 5
-            exit 1
-          }
-          Write-Host "Using MSBuild: $msbuild"
-          & $msbuild Fragaria\Fragaria.csproj `
-            /restore `
-            /t:Publish `
-            /p:Configuration=Release `
-            /p:Platform=x64 `
-            /p:RuntimeIdentifier=win-x64 `
-            /p:SelfContained=true `
-            /p:WindowsAppSDKSelfContained=true `
-            /p:EnableMsixTooling=false `
-            /p:DisableMrtCoreCompilation=true `
-            /p:PublishDir="$pwd\dist\Fragaria\"
+          msbuild Fragaria\Fragaria.csproj ^
+            /restore ^
+            /t:Publish ^
+            /p:Configuration=Release ^
+            /p:Platform=x64 ^
+            /p:RuntimeIdentifier=win-x64 ^
+            /p:SelfContained=true ^
+            /p:WindowsAppSDKSelfContained=true ^
+            /p:EnableMsixTooling=false ^
+            /p:DisableMrtCoreCompilation=true ^
+            /p:PublishDir=%CD%\dist\Fragaria\
 
       - name: Install Inno Setup 6
         shell: pwsh
