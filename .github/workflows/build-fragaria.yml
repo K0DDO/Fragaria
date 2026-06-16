@@ -11,9 +11,6 @@ on:
 jobs:
   build-installer:
     runs-on: windows-latest
-    defaults:
-      run:
-        working-directory: Fragaria
 
     steps:
       - uses: actions/checkout@v4
@@ -24,6 +21,7 @@ jobs:
           dotnet-version: '8.0.x'
 
       - name: Publish Fragaria (self-contained)
+        working-directory: Fragaria
         run: |
           dotnet publish Fragaria\Fragaria.csproj `
             -c Release `
@@ -35,8 +33,8 @@ jobs:
       - name: Compile installer (Inno Setup)
         uses: amake/innosetup-compiler@v1.0.0
         with:
-          path: installer/Fragaria.iss
-          options: /Odist
+          path: Fragaria/installer/Fragaria.iss
+          options: /OFragaria/dist
 
       - name: Upload portable build
         uses: actions/upload-artifact@v4
