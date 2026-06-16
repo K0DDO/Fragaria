@@ -29,11 +29,16 @@ public sealed partial class StripViewModel : ObservableObject
         StreamLimitPercent = strip.StreamLimit * 100;
         Muted = strip.Muted;
         Duckable = strip.Duckable;
+        RouteA1 = strip.RouteStream;
+        RouteA2 = strip.RouteHeadphones;
+        Solo = strip.Solo;
         EqLow = strip.Eq.LowDb;
         EqMid = strip.Eq.MidDb;
         EqHigh = strip.Eq.HighDb;
         CompThreshold = strip.Compressor.ThresholdDb;
         CompRatio = strip.Compressor.Ratio;
+        CompLevel = Math.Clamp((-strip.Compressor.ThresholdDb + 40) / 40.0 * 100, 0, 100);
+        GateLevel = 50;
         _ = LoadIconAsync(strip.IconPng);
     }
 
@@ -47,6 +52,11 @@ public sealed partial class StripViewModel : ObservableObject
     [ObservableProperty] private double _streamLimitPercent;
     [ObservableProperty] private bool _muted;
     [ObservableProperty] private bool _duckable = true;
+    [ObservableProperty] private bool _routeA1 = true;
+    [ObservableProperty] private bool _routeA2 = true;
+    [ObservableProperty] private bool _solo;
+    [ObservableProperty] private double _gateLevel = 50;
+    [ObservableProperty] private double _compLevel = 60;
     [ObservableProperty] private double _peakHp;
     [ObservableProperty] private double _peakStream;
     [ObservableProperty] private double _eqLow;
@@ -73,9 +83,17 @@ public sealed partial class StripViewModel : ObservableObject
     }
     partial void OnMutedChanged(bool value) { _strip.Muted = value; _onChanged(); }
     partial void OnDuckableChanged(bool value) { _strip.Duckable = value; _onChanged(); }
+    partial void OnRouteA1Changed(bool value) { _strip.RouteStream = value; _onChanged(); }
+    partial void OnRouteA2Changed(bool value) { _strip.RouteHeadphones = value; _onChanged(); }
+    partial void OnSoloChanged(bool value) { _strip.Solo = value; _onChanged(); }
     partial void OnEqLowChanged(double value) { _strip.Eq.LowDb = (float)value; _onChanged(); }
     partial void OnEqMidChanged(double value) { _strip.Eq.MidDb = (float)value; _onChanged(); }
     partial void OnEqHighChanged(double value) { _strip.Eq.HighDb = (float)value; _onChanged(); }
+    partial void OnCompLevelChanged(double value)
+    {
+        _strip.Compressor.ThresholdDb = (float)(-40 + (100 - value) * 0.4);
+        _onChanged();
+    }
     partial void OnCompThresholdChanged(double value) { _strip.Compressor.ThresholdDb = (float)value; _onChanged(); }
     partial void OnCompRatioChanged(double value) { _strip.Compressor.Ratio = (float)value; _onChanged(); }
 

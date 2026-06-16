@@ -1,10 +1,15 @@
 using Fragaria.Models;
 using Fragaria.Services;
 using Fragaria.ViewModels;
+using Microsoft.UI.Composition.SystemBackdrops;
 using Microsoft.UI.Dispatching;
+using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
+using Microsoft.UI.Xaml.Media;
+using System.Diagnostics;
+using System.Linq;
 using WinRT.Interop;
 
 namespace Fragaria;
@@ -20,11 +25,15 @@ public sealed partial class MainWindow : Window
     private ObsWebSocketService? _obs;
     private readonly DispatcherTimer _meterTimer;
     private readonly DispatcherTimer _windowTimer;
+    private readonly DispatcherTimer _clockTimer;
+    private DateTime _lastCpuCheck = DateTime.UtcNow;
+    private TimeSpan _lastCpuTime;
 
     public MainWindow()
     {
         InitializeComponent();
         Title = "Fragaria";
+        ConfigureWindow();
 
         var dq = DispatcherQueue.GetForCurrentThread();
         _vm = new MainViewModel(_engine, dq);
@@ -52,6 +61,11 @@ public sealed partial class MainWindow : Window
         _windowTimer.Tick += (_, _) => RefreshWindowPicker();
         _windowTimer.Start();
 
+        _clockTimer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(1) };
+        _clockTimer.Tick += (_, _) => ClockLabel.Text = DateTime.Now.ToString("HH:mm:ss");
+        _clockTimer.Start();
+        ClockLabel.Text = DateTime.Now.ToString("HH:mm:ss");
+
         WindowPicker.WindowSelected += hwnd => _vm.AddWindow(hwnd);
 
         NoiseGateToggle.Toggled += (s, _) => _vm.NoiseGateEnabled = ((ToggleSwitch)s!).IsOn;
@@ -65,6 +79,8 @@ public sealed partial class MainWindow : Window
             else await _obs.DisconnectAsync();
         };
 
+        WireEffectsSliders();
+
         _vm.StartEngine();
         _vm.RefreshStrips();
         RefreshWindowPicker();
@@ -76,12 +92,56 @@ public sealed partial class MainWindow : Window
         Closed += (_, _) => Cleanup();
     }
 
+    private void ConfigureWindow()
+    {
+        var hwnd = WindowNative.GetWindowHandle(this);
+        var id = Microsoft.UI.Win32Interop.GetWindowIdFromWindow(hwnd);
+        var appWindow = AppWindow.GetFromWindowId(id);
+        appWindow.Resize(new Windows.Graphics.SizeInt32(1320, 780));
+        if (appWindow.TitleBar != null)
+            appWindow.TitleBar.ExtendsContentIntoTitleBar = false;
+
+        if (MicaController.IsSupported())
+            SystemBackdrop = new MicaBackdrop { Kind = MicaKind.BaseAlt };
+    }
+
+    private void WireEffectsSliders()
+    {
+        FxEqLow.ValueChanged += (_, _) => ApplyFxToMic();
+        FxEqMid.ValueChanged += (_, _) => ApplyFxToMic();
+        FxEqHigh.ValueChanged += (_, _) => ApplyFxToMic();
+        FxCompThreshold.ValueChanged += (_, _) => ApplyFxToMic();
+        FxCompRatio.ValueChanged += (_, _) => ApplyFxToMic();
+    }
+
+    private void ApplyFxToMic()
+    {
+        var mic = _vm.Strips.FirstOrDefault(s => s.IsMicrophone);
+        if (mic == null) return;
+        mic.EqLow = FxEqLow.Value;
+        mic.EqMid = FxEqMid.Value;
+        mic.EqHigh = FxEqHigh.Value;
+        mic.CompThreshold = FxCompThreshold.Value;
+        mic.CompRatio = FxCompRatio.Value;
+    }
+
+    private void SyncEffectsFromMic()
+    {
+        var mic = _vm.Strips.FirstOrDefault(s => s.IsMicrophone);
+        if (mic == null) return;
+        FxEqLow.Value = mic.EqLow;
+        FxEqMid.Value = mic.EqMid;
+        FxEqHigh.Value = mic.EqHigh;
+        FxCompThreshold.Value = mic.CompThreshold;
+        FxCompRatio.Value = mic.CompRatio;
+    }
+
     private void SetupTray()
     {
         _tray = new TrayService();
         _tray.OpenRequested += () => DispatcherQueue.TryEnqueue(() => { AppWindow.Show(); Activate(); });
         _tray.ExitRequested += () => DispatcherQueue.TryEnqueue(Close);
-        _tray.ShowBalloon("Fragaria", "Все 10 функций активны!");
+        _tray.ShowBalloon("Fragaria", "Pro Audio for Streamers");
     }
 
     private void SetupHotkeys()
@@ -91,7 +151,7 @@ public sealed partial class MainWindow : Window
         _hotkeys.RegisterScenes(_vm.Scenes, scene => DispatcherQueue.TryEnqueue(() =>
         {
             _vm.ApplySceneCommand.Execute(scene);
-            StatusText.Text = $"Сцена: {scene.Name}";
+            StatusText.Text = $"Scene: {scene.Name}";
         }));
         _hook = new HwndMessageHook(hwnd, _hotkeys);
     }
@@ -100,11 +160,11 @@ public sealed partial class MainWindow : Window
     {
         _obs = new ObsWebSocketService(_vm.Settings.Obs);
         _obs.ConnectionChanged += c => DispatcherQueue.TryEnqueue(() =>
-            ObsStatus.Text = c ? "OBS: подключён" : "OBS: отключён");
+            ObsStatus.Text = c ? "OBS ●" : "OBS ○");
         _obs.SceneChanged += scene => DispatcherQueue.TryEnqueue(() =>
         {
             _engine.OnObsScene(scene, _vm.Settings.Obs);
-            StatusText.Text = $"OBS сцена: {scene}";
+            StatusText.Text = $"OBS: {scene}";
         });
         if (_vm.ObsEnabled) _ = _obs.ConnectAsync();
     }
@@ -116,16 +176,40 @@ public sealed partial class MainWindow : Window
     {
         MasterHpSpectrum.SetBands(_vm.HpSpectrum);
         MasterStreamSpectrum.SetBands(_vm.StreamSpectrum);
-        DuckingLabel.Text = $"Duck: {_vm.DuckingGain:F0}%";
+        EffectsSpectrum.SetBands(_vm.StreamSpectrum);
+        MasterHpMeter.Level = _vm.MasterHpPeak;
+        MasterStreamMeter.Level = _vm.MasterStreamPeak;
+        DuckingLabel.Text = $"DUCK {_vm.DuckingGain:F0}%";
         if (!string.IsNullOrEmpty(_vm.StatusMessage))
             StatusText.Text = _vm.StatusMessage;
-        RecordBtn.Content = _vm.IsRecording ? "⏹ Стоп" : "⏺ Запись";
+        RecordBtn.Content = _vm.IsRecording ? "STOP" : "REC";
+        RecordIndicator.Text = _vm.IsRecording ? "ON" : "OFF";
+        RecordIndicator.Foreground = _vm.IsRecording
+            ? (Brush)Application.Current.Resources["FragariaPrimaryBrush"]
+            : (Brush)Application.Current.Resources["FragariaMutedBrush"];
+        UpdateCpuLabel();
+    }
+
+    private void UpdateCpuLabel()
+    {
+        var proc = Process.GetCurrentProcess();
+        var now = DateTime.UtcNow;
+        var cpu = proc.TotalProcessorTime;
+        var elapsed = (now - _lastCpuCheck).TotalMilliseconds;
+        if (elapsed > 400)
+        {
+            var usage = (cpu - _lastCpuTime).TotalMilliseconds / elapsed / Environment.ProcessorCount * 100;
+            CpuLabel.Text = $"CPU {usage:F1}%";
+            _lastCpuCheck = now;
+            _lastCpuTime = cpu;
+        }
     }
 
     private void Cleanup()
     {
         _meterTimer.Stop();
         _windowTimer.Stop();
+        _clockTimer.Stop();
         _hotkeys?.Dispose();
         _hook?.Dispose();
         _obs?.Dispose();
@@ -162,14 +246,9 @@ public sealed partial class MainWindow : Window
     private void Record_Click(object sender, RoutedEventArgs e) =>
         _vm.ToggleRecordingCommand.Execute(null);
 
-    private void SceneGame_Click(object sender, RoutedEventArgs e) =>
-        ApplySceneByIndex(0);
-
-    private void SceneTalk_Click(object sender, RoutedEventArgs e) =>
-        ApplySceneByIndex(1);
-
-    private void SceneStream_Click(object sender, RoutedEventArgs e) =>
-        ApplySceneByIndex(2);
+    private void SceneGame_Click(object sender, RoutedEventArgs e) => ApplySceneByIndex(0);
+    private void SceneTalk_Click(object sender, RoutedEventArgs e) => ApplySceneByIndex(1);
+    private void SceneStream_Click(object sender, RoutedEventArgs e) => ApplySceneByIndex(2);
 
     private void ApplySceneByIndex(int i)
     {
@@ -177,47 +256,28 @@ public sealed partial class MainWindow : Window
             _vm.ApplySceneCommand.Execute(_vm.Scenes[i]);
     }
 
-    private async void Settings_Click(object sender, RoutedEventArgs e)
+    private void NavMixer_Click(object sender, RoutedEventArgs e) => ShowPage(MixerPage, NavMixer);
+    private void NavRouting_Click(object sender, RoutedEventArgs e) => ShowPage(RoutingPage, NavRouting);
+    private void NavEffects_Click(object sender, RoutedEventArgs e)
     {
-        var dlg = new ContentDialog
-        {
-            Title = "Настройки Fragaria",
-            PrimaryButtonText = "OK",
-            XamlRoot = Content.XamlRoot,
-            Content = BuildSettingsPanel()
-        };
-        await dlg.ShowAsync();
+        ShowPage(EffectsPage, NavEffects);
+        SyncEffectsFromMic();
     }
+    private void NavSettings_Click(object sender, RoutedEventArgs e) => ShowPage(SettingsPage, NavSettings);
 
-    private StackPanel BuildSettingsPanel()
+    private void ShowPage(FrameworkElement page, Button activeBtn)
     {
-        var vdm = new VirtualDriverManager(_vm.Settings.VirtualDriver);
-        var status = vdm.CheckStatus();
-        return new StackPanel
-        {
-            Spacing = 12,
-            Width = 400,
-            Children =
-            {
-                new TextBlock { Text = "Noise Gate", FontWeight = Microsoft.UI.Text.FontWeights.SemiBold },
-                new Slider { Header = "Порог %", Minimum = 0, Maximum = 10, Value = _vm.NoiseGateThreshold },
-                new TextBlock { Text = "Ducking", FontWeight = Microsoft.UI.Text.FontWeights.SemiBold },
-                new Slider { Header = "Сила ducking %", Minimum = 0, Maximum = 80, Value = _vm.DuckingAmount },
-                new TextBlock { Text = "Запись", FontWeight = Microsoft.UI.Text.FontWeights.SemiBold },
-                new CheckBox { Content = "Записывать шину A", IsChecked = _vm.RecordHeadphones },
-                new CheckBox { Content = "Записывать шину B", IsChecked = _vm.RecordStream },
-                new TextBlock { Text = "OBS WebSocket", FontWeight = Microsoft.UI.Text.FontWeights.SemiBold },
-                new TextBox { PlaceholderText = "ws://127.0.0.1:4455", Text = _vm.ObsHost },
-                new TextBlock { Text = "Виртуальный драйвер", FontWeight = Microsoft.UI.Text.FontWeights.SemiBold },
-                new TextBlock
-                {
-                    Text = status.HasOutputA
-                        ? "✓ Виртуальные устройства обнаружены"
-                        : "✗ Установите VB-Cable (см. driver/install-fragaria-driver.ps1)",
-                    TextWrapping = TextWrapping.Wrap
-                }
-            }
-        };
+        MixerPage.Visibility = Visibility.Collapsed;
+        RoutingPage.Visibility = Visibility.Collapsed;
+        EffectsPage.Visibility = Visibility.Collapsed;
+        SettingsPage.Visibility = Visibility.Collapsed;
+        page.Visibility = Visibility.Visible;
+
+        NavMixer.Style = (Style)Application.Current.Resources["FragariaNavBtn"];
+        NavRouting.Style = (Style)Application.Current.Resources["FragariaNavBtn"];
+        NavEffects.Style = (Style)Application.Current.Resources["FragariaNavBtn"];
+        NavSettings.Style = (Style)Application.Current.Resources["FragariaNavBtn"];
+        activeBtn.Style = (Style)Application.Current.Resources["FragariaNavBtnActive"];
     }
 
     private void Strip_DragOver(object sender, DragEventArgs e) =>

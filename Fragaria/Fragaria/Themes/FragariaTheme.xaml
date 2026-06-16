@@ -2,54 +2,187 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
-    <!-- Fragaria — strawberry palette -->
-    <Color x:Key="FragariaBg">#FF0E080A</Color>
-    <Color x:Key="FragariaSurface">#FF1A1016</Color>
-    <Color x:Key="FragariaSurfaceLight">#FF261820</Color>
-    <Color x:Key="FragariaPrimary">#FFE8475F</Color>
-    <Color x:Key="FragariaPrimaryGlow">#66E8475F</Color>
-    <Color x:Key="FragariaLeaf">#FF3DDC84</Color>
-    <Color x:Key="FragariaStream">#FF6B9FFF</Color>
-    <Color x:Key="FragariaText">#FFFFF5F6</Color>
-    <Color x:Key="FragariaMuted">#99C4A8AC</Color>
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="FragariaGlassSliders.xaml"/>
+    </ResourceDictionary.MergedDictionaries>
 
-    <SolidColorBrush x:Key="FragariaBgBrush" Color="{StaticResource FragariaBg}"/>
-    <SolidColorBrush x:Key="FragariaSurfaceBrush" Color="{StaticResource FragariaSurface}"/>
-    <SolidColorBrush x:Key="FragariaSurfaceLightBrush" Color="{StaticResource FragariaSurfaceLight}"/>
-    <SolidColorBrush x:Key="FragariaPrimaryBrush" Color="{StaticResource FragariaPrimary}"/>
-    <SolidColorBrush x:Key="FragariaLeafBrush" Color="{StaticResource FragariaLeaf}"/>
-    <SolidColorBrush x:Key="FragariaStreamBrush" Color="{StaticResource FragariaStream}"/>
-    <SolidColorBrush x:Key="FragariaTextBrush" Color="{StaticResource FragariaText}"/>
-    <SolidColorBrush x:Key="FragariaMutedBrush" Color="{StaticResource FragariaMuted}"/>
+    <!-- Fragaria Pro Audio — design system -->
+    <Color x:Key="Graphite">#FF1F1F23</Color>
+    <Color x:Key="GraphiteLight">#FF2A2A30</Color>
+    <Color x:Key="GraphiteDark">#FF141418</Color>
+    <Color x:Key="StrawberryRed">#FFB8203A</Color>
+    <Color x:Key="RoseGlow">#FFA85B5E</Color>
+    <Color x:Key="DeepWine">#FF5C1F22</Color>
+    <Color x:Key="LeafGreen">#FF34C75A</Color>
+    <Color x:Key="ForestGreen">#FF1F4F23</Color>
+    <Color x:Key="TextPrimary">#FFF0F0F2</Color>
+    <Color x:Key="TextMuted">#99A0A8B0</Color>
+    <Color x:Key="BorderGlow">#44B8203A</Color>
+    <Color x:Key="BorderGreen">#4434C75A</Color>
 
-    <LinearGradientBrush x:Key="FragariaHeaderGradient" StartPoint="0,0" EndPoint="1,1">
-        <GradientStop Color="#FF1A1016" Offset="0"/>
-        <GradientStop Color="#FF2A1420" Offset="0.5"/>
-        <GradientStop Color="#FF1A1016" Offset="1"/>
+    <SolidColorBrush x:Key="FragariaBgBrush" Color="{StaticResource Graphite}"/>
+    <SolidColorBrush x:Key="FragariaSurfaceBrush" Color="{StaticResource GraphiteLight}"/>
+    <SolidColorBrush x:Key="FragariaSurfaceLightBrush" Color="{StaticResource GraphiteLight}"/>
+    <SolidColorBrush x:Key="FragariaPrimaryBrush" Color="{StaticResource StrawberryRed}"/>
+    <SolidColorBrush x:Key="FragariaRoseBrush" Color="{StaticResource RoseGlow}"/>
+    <SolidColorBrush x:Key="FragariaWineBrush" Color="{StaticResource DeepWine}"/>
+    <SolidColorBrush x:Key="FragariaLeafBrush" Color="{StaticResource LeafGreen}"/>
+    <SolidColorBrush x:Key="FragariaForestBrush" Color="{StaticResource ForestGreen}"/>
+    <SolidColorBrush x:Key="FragariaTextBrush" Color="{StaticResource TextPrimary}"/>
+    <SolidColorBrush x:Key="FragariaMutedBrush" Color="{StaticResource TextMuted}"/>
+    <SolidColorBrush x:Key="FragariaStreamBrush" Color="{StaticResource LeafGreen}"/>
+
+    <LinearGradientBrush x:Key="FragariaHeaderGradient" StartPoint="0,0" EndPoint="1,0">
+        <GradientStop Color="#FF141418" Offset="0"/>
+        <GradientStop Color="#FF2A1520" Offset="0.5"/>
+        <GradientStop Color="#FF141418" Offset="1"/>
     </LinearGradientBrush>
 
-    <Style x:Key="FragariaCard" TargetType="Border">
-        <Setter Property="Background" Value="{StaticResource FragariaSurfaceBrush}"/>
-        <Setter Property="BorderBrush" Value="#33E8475F"/>
-        <Setter Property="BorderThickness" Value="1"/>
-        <Setter Property="CornerRadius" Value="12"/>
-        <Setter Property="Padding" Value="16"/>
+    <LinearGradientBrush x:Key="FragariaMeterGradient" StartPoint="0,1" EndPoint="0,0">
+        <GradientStop Color="#FF34C75A" Offset="0"/>
+        <GradientStop Color="#FFE8C840" Offset="0.65"/>
+        <GradientStop Color="#FFB8203A" Offset="1"/>
+    </LinearGradientBrush>
+
+    <LinearGradientBrush x:Key="FragariaGlowLine" StartPoint="0,0" EndPoint="1,0">
+        <GradientStop Color="#00B8203A" Offset="0"/>
+        <GradientStop Color="#FFB8203A" Offset="0.5"/>
+        <GradientStop Color="#00B8203A" Offset="1"/>
+    </LinearGradientBrush>
+
+  <!-- Typography -->
+    <x:String x:Key="FragariaFontDisplay">Segoe UI Variable Display</x:String>
+    <x:String x:Key="FragariaFontMono">Cascadia Mono</x:String>
+
+    <Style x:Key="FragariaWordmark" TargetType="TextBlock">
+        <Setter Property="FontFamily" Value="{StaticResource FragariaFontDisplay}"/>
+        <Setter Property="FontSize" Value="22"/>
+        <Setter Property="FontWeight" Value="Bold"/>
+        <Setter Property="CharacterSpacing" Value="200"/>
+        <Setter Property="Foreground" Value="{StaticResource FragariaTextBrush}"/>
     </Style>
 
     <Style x:Key="FragariaTitle" TargetType="TextBlock">
+        <Setter Property="FontFamily" Value="{StaticResource FragariaFontDisplay}"/>
         <Setter Property="Foreground" Value="{StaticResource FragariaTextBrush}"/>
-        <Setter Property="FontSize" Value="28"/>
+        <Setter Property="FontSize" Value="20"/>
         <Setter Property="FontWeight" Value="SemiBold"/>
     </Style>
 
     <Style x:Key="FragariaLabel" TargetType="TextBlock">
+        <Setter Property="FontFamily" Value="{StaticResource FragariaFontMono}"/>
         <Setter Property="Foreground" Value="{StaticResource FragariaMutedBrush}"/>
-        <Setter Property="FontSize" Value="12"/>
+        <Setter Property="FontSize" Value="11"/>
     </Style>
 
-    <Style x:Key="FragariaSlider" TargetType="Slider">
-        <Setter Property="Foreground" Value="{StaticResource FragariaPrimaryBrush}"/>
-        <Setter Property="Minimum" Value="0"/>
-        <Setter Property="Maximum" Value="100"/>
+    <Style x:Key="FragariaMono" TargetType="TextBlock">
+        <Setter Property="FontFamily" Value="{StaticResource FragariaFontMono}"/>
+        <Setter Property="Foreground" Value="{StaticResource FragariaMutedBrush}"/>
+        <Setter Property="FontSize" Value="11"/>
+    </Style>
+
+    <Style x:Key="FragariaSectionTitle" TargetType="TextBlock">
+        <Setter Property="FontFamily" Value="{StaticResource FragariaFontDisplay}"/>
+        <Setter Property="FontSize" Value="11"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Setter Property="CharacterSpacing" Value="80"/>
+        <Setter Property="Foreground" Value="{StaticResource FragariaRoseBrush}"/>
+    </Style>
+
+    <!-- Glass card -->
+    <Style x:Key="FragariaCard" TargetType="Border">
+        <Setter Property="Background" Value="#CC252529"/>
+        <Setter Property="BorderBrush" Value="{StaticResource FragariaPrimaryBrush}"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="CornerRadius" Value="10"/>
+        <Setter Property="Padding" Value="12"/>
+    </Style>
+
+    <Style x:Key="FragariaGlassPanel" TargetType="Border">
+        <Setter Property="Background" Value="#B31F1F23"/>
+        <Setter Property="BorderBrush" Value="#33B8203A"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="CornerRadius" Value="8"/>
+    </Style>
+
+    <!-- Channel strip -->
+    <Style x:Key="FragariaChannelStrip" TargetType="Border">
+        <Setter Property="Width" Value="108"/>
+        <Setter Property="Background" Value="#991A1A1E"/>
+        <Setter Property="BorderBrush" Value="#44FFFFFF"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="CornerRadius" Value="8"/>
+        <Setter Property="Padding" Value="8,10"/>
+    </Style>
+
+    <!-- Vertical fader + horizontal slider → see FragariaGlassSliders.xaml -->
+
+    <!-- Routing toggle -->
+    <Style x:Key="FragariaRoutingToggle" TargetType="ToggleButton">
+        <Setter Property="Width" Value="28"/>
+        <Setter Property="Height" Value="22"/>
+        <Setter Property="FontSize" Value="9"/>
+        <Setter Property="FontFamily" Value="{StaticResource FragariaFontMono}"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Setter Property="Foreground" Value="{StaticResource FragariaMutedBrush}"/>
+        <Setter Property="Background" Value="#FF1A1A1E"/>
+        <Setter Property="BorderBrush" Value="#44FFFFFF"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="CornerRadius" Value="4"/>
+        <Setter Property="Padding" Value="0"/>
+    </Style>
+
+    <!-- Strip action button (S, M, Mono) -->
+    <Style x:Key="FragariaStripBtn" TargetType="ToggleButton">
+        <Setter Property="Width" Value="28"/>
+        <Setter Property="Height" Value="22"/>
+        <Setter Property="FontSize" Value="10"/>
+        <Setter Property="FontFamily" Value="{StaticResource FragariaFontMono}"/>
+        <Setter Property="FontWeight" Value="Bold"/>
+        <Setter Property="Foreground" Value="{StaticResource FragariaMutedBrush}"/>
+        <Setter Property="Background" Value="#FF1A1A1E"/>
+        <Setter Property="BorderBrush" Value="#33FFFFFF"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="CornerRadius" Value="4"/>
+    </Style>
+
+    <!-- Footer nav -->
+    <Style x:Key="FragariaNavBtn" TargetType="Button">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="FontFamily" Value="{StaticResource FragariaFontMono}"/>
+        <Setter Property="FontSize" Value="11"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Setter Property="Foreground" Value="{StaticResource FragariaMutedBrush}"/>
+        <Setter Property="Padding" Value="16,8"/>
+        <Setter Property="CornerRadius" Value="4"/>
+    </Style>
+
+    <Style x:Key="FragariaNavBtnActive" TargetType="Button" BasedOn="{StaticResource FragariaNavBtn}">
+        <Setter Property="Foreground" Value="{StaticResource FragariaLeafBrush}"/>
+        <Setter Property="Background" Value="#2234C75A"/>
+    </Style>
+
+    <!-- Primary action -->
+    <Style x:Key="FragariaPrimaryBtn" TargetType="Button">
+        <Setter Property="Background" Value="{StaticResource FragariaPrimaryBrush}"/>
+        <Setter Property="Foreground" Value="White"/>
+        <Setter Property="FontFamily" Value="{StaticResource FragariaFontMono}"/>
+        <Setter Property="FontSize" Value="11"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Setter Property="CornerRadius" Value="6"/>
+        <Setter Property="Padding" Value="12,6"/>
+        <Setter Property="BorderThickness" Value="0"/>
+    </Style>
+
+    <Style x:Key="FragariaGhostBtn" TargetType="Button">
+        <Setter Property="Background" Value="#22FFFFFF"/>
+        <Setter Property="Foreground" Value="{StaticResource FragariaTextBrush}"/>
+        <Setter Property="FontFamily" Value="{StaticResource FragariaFontMono}"/>
+        <Setter Property="FontSize" Value="11"/>
+        <Setter Property="CornerRadius" Value="6"/>
+        <Setter Property="Padding" Value="10,6"/>
+        <Setter Property="BorderBrush" Value="#33FFFFFF"/>
+        <Setter Property="BorderThickness" Value="1"/>
     </Style>
 </ResourceDictionary>

@@ -5,166 +5,392 @@
     xmlns:controls="using:Fragaria.Controls"
     Title="Fragaria">
 
-    <Grid Background="{StaticResource FragariaBgBrush}">
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="260"/>
-            <ColumnDefinition Width="*"/>
-        </Grid.ColumnDefinitions>
+    <Grid>
+        <Grid.Background>
+            <AcrylicBrush BackgroundSource="Backdrop"
+                          TintColor="#FF1F1F23"
+                          TintOpacity="0.82"
+                          FallbackColor="#FF1F1F23"/>
+        </Grid.Background>
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <!-- Header -->
-        <Border Grid.Row="0" Grid.ColumnSpan="2" Background="{StaticResource FragariaHeaderGradient}" Padding="24,16">
+        <!-- ═══ HEADER ═══ -->
+        <Border Grid.Row="0" Background="{StaticResource FragariaHeaderGradient}" Padding="20,14">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
-                <StackPanel Orientation="Horizontal" Spacing="12">
-                    <FontIcon Glyph="&#xE735;" Foreground="{StaticResource FragariaPrimaryBrush}" FontSize="32"/>
-                    <StackPanel VerticalAlignment="Center">
-                        <TextBlock Text="Fragaria" Style="{StaticResource FragariaTitle}"/>
-                        <TextBlock x:Name="StatusText" Foreground="{StaticResource FragariaMutedBrush}" FontSize="12"/>
+
+                <StackPanel Orientation="Horizontal" Spacing="14">
+                    <Border Width="40" Height="40" CornerRadius="20"
+                            BorderBrush="{StaticResource FragariaPrimaryBrush}" BorderThickness="2"
+                            Background="#33B8203A">
+                        <FontIcon Glyph="&#xE735;" Foreground="{StaticResource FragariaPrimaryBrush}"
+                                  FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                    <StackPanel VerticalAlignment="Center" Spacing="2">
+                        <TextBlock Text="FRAGARIA" Style="{StaticResource FragariaWordmark}"/>
+                        <TextBlock Text="Pro Audio for Streamers"
+                                   Style="{StaticResource FragariaLabel}" Foreground="{StaticResource FragariaRoseBrush}"/>
                     </StackPanel>
                 </StackPanel>
-                <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
-                    <ComboBox x:Name="PresetCombo" Width="130" PlaceholderText="Пресет"/>
-                    <Button Content="Загрузить" Click="LoadPreset_Click"/>
-                    <Button Content="Сохранить" Click="SavePreset_Click"/>
-                    <Button x:Name="RecordBtn" Content="⏺ Запись" Click="Record_Click"/>
-                    <Button Content="⚙" Click="Settings_Click" ToolTipService.ToolTip="Настройки"/>
+
+                <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
+                    <TextBlock x:Name="StatusText" Style="{StaticResource FragariaMono}"
+                               VerticalAlignment="Center" Margin="0,0,8,0"/>
+                    <TextBlock Text="48 kHz · 24-bit · v1.0.0" Style="{StaticResource FragariaMono}"
+                               VerticalAlignment="Center"/>
+                    <ComboBox x:Name="PresetCombo" Width="140" PlaceholderText="Preset"/>
+                    <Button Content="LOAD" Style="{StaticResource FragariaGhostBtn}" Click="LoadPreset_Click"/>
+                    <Button Content="SAVE" Style="{StaticResource FragariaGhostBtn}" Click="SavePreset_Click"/>
+                    <Button x:Name="RecordBtn" Content="REC" Style="{StaticResource FragariaPrimaryBtn}" Click="Record_Click"/>
                 </StackPanel>
             </Grid>
         </Border>
 
-        <!-- Scenes hotkeys -->
-        <Border Grid.Row="1" Grid.ColumnSpan="2" Margin="16,8,16,0" Style="{StaticResource FragariaCard}" Padding="12">
-            <StackPanel Orientation="Horizontal" Spacing="8">
-                <TextBlock Text="Сцены:" Style="{StaticResource FragariaLabel}" VerticalAlignment="Center"/>
-                <Button x:Name="SceneGameBtn" Content="🎮 Игра (Ctrl+1)" Click="SceneGame_Click"/>
-                <Button x:Name="SceneTalkBtn" Content="💬 Разговор (Ctrl+2)" Click="SceneTalk_Click"/>
-                <Button x:Name="SceneStreamBtn" Content="📡 Стрим (Ctrl+3)" Click="SceneStream_Click"/>
-                <TextBlock x:Name="DuckingLabel" Foreground="{StaticResource FragariaLeafBrush}"
-                           VerticalAlignment="Center" Margin="16,0,0,0" FontSize="12"/>
-                <TextBlock x:Name="ObsStatus" Foreground="{StaticResource FragariaStreamBrush}"
-                           VerticalAlignment="Center" FontSize="12"/>
-            </StackPanel>
-        </Border>
+        <!-- ═══ PAGE HOST ═══ -->
+        <Grid Grid.Row="1" Margin="12,8,12,0">
 
-        <!-- Window picker sidebar -->
-        <Border Grid.Row="2" Grid.Column="0" Margin="16,8,8,8" Style="{StaticResource FragariaCard}">
-            <StackPanel Spacing="8">
-                <TextBlock Text="Окна" FontWeight="SemiBold" Foreground="{StaticResource FragariaTextBrush}"/>
-                <controls:WindowPickerControl x:Name="WindowPicker"/>
-                <Button Content="Обновить" Click="Rescan_Click"/>
-            </StackPanel>
-        </Border>
+            <!-- ── MIXER ── -->
+            <Grid x:Name="MixerPage" Visibility="Visible">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
 
-        <!-- Main mixer -->
-        <ScrollViewer Grid.Row="2" Grid.Column="1" Margin="8,8,16,8" VerticalScrollBarVisibility="Auto">
-            <StackPanel Spacing="10">
-                <!-- Master -->
-                <Border Style="{StaticResource FragariaCard}">
-                    <Grid ColumnSpacing="20">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-                        <StackPanel Spacing="6">
-                            <TextBlock Text="Шина A — Наушники" Style="{StaticResource FragariaLabel}"/>
-                            <Slider x:Name="MasterHpSlider" Style="{StaticResource FragariaSlider}" ValueChanged="Master_Changed"/>
-                            <Slider x:Name="MasterHpLimitSlider" Header="Лимит" Style="{StaticResource FragariaSlider}" ValueChanged="Master_Changed"/>
-                            <controls:SpectrumMeter x:Name="MasterHpSpectrum"/>
-                        </StackPanel>
-                        <StackPanel Grid.Column="1" Spacing="6">
-                            <TextBlock Text="Шина B — Стрим" Foreground="{StaticResource FragariaStreamBrush}" Style="{StaticResource FragariaLabel}"/>
-                            <Slider x:Name="MasterStreamSlider" Style="{StaticResource FragariaSlider}" ValueChanged="Master_Changed"/>
-                            <Slider x:Name="MasterStreamLimitSlider" Header="Лимит" Style="{StaticResource FragariaSlider}" ValueChanged="Master_Changed"/>
-                            <controls:SpectrumMeter x:Name="MasterStreamSpectrum"/>
-                        </StackPanel>
-                    </Grid>
+                <!-- Scene presets bar -->
+                <Border Grid.Row="0" Style="{StaticResource FragariaGlassPanel}" Padding="10,8" Margin="0,0,0,8">
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <TextBlock Text="SCENES" Style="{StaticResource FragariaSectionTitle}" VerticalAlignment="Center"/>
+                        <Button x:Name="SceneGameBtn" Content="GAMING" Style="{StaticResource FragariaGhostBtn}" Click="SceneGame_Click"/>
+                        <Button x:Name="SceneTalkBtn" Content="VOICE" Style="{StaticResource FragariaGhostBtn}" Click="SceneTalk_Click"/>
+                        <Button x:Name="SceneStreamBtn" Content="BROADCAST" Style="{StaticResource FragariaGhostBtn}" Click="SceneStream_Click"/>
+                        <Rectangle Width="1" Height="20" Fill="#33FFFFFF" Margin="8,0"/>
+                        <TextBlock x:Name="DuckingLabel" Style="{StaticResource FragariaMono}" Foreground="{StaticResource FragariaLeafBrush}" VerticalAlignment="Center"/>
+                        <TextBlock x:Name="ObsStatus" Style="{StaticResource FragariaMono}" Foreground="{StaticResource FragariaStreamBrush}" VerticalAlignment="Center"/>
+                    </StackPanel>
                 </Border>
 
-                <!-- Strips -->
-                <ItemsControl x:Name="StripsList">
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate x:DataType="viewmodels:StripViewModel"
-                                      xmlns:viewmodels="using:Fragaria.ViewModels">
-                            <Border Style="{StaticResource FragariaCard}"
-                                    AllowDrop="True" DragOver="Strip_DragOver" Drop="Strip_Drop">
-                                <Expander IsExpanded="False">
-                                    <Expander.Header>
-                                        <Grid ColumnSpacing="12">
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="36"/>
-                                                <ColumnDefinition Width="180"/>
-                                                <ColumnDefinition Width="*"/>
-                                                <ColumnDefinition Width="*"/>
-                                                <ColumnDefinition Width="100"/>
-                                            </Grid.ColumnDefinitions>
-                                            <Image Source="{x:Bind Icon}" Width="28" Height="28"/>
-                                            <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                                                <TextBlock Text="{x:Bind Title}" Foreground="{StaticResource FragariaTextBrush}"
-                                                           FontWeight="SemiBold" TextTrimming="CharacterEllipsis"/>
-                                                <TextBlock Text="{x:Bind ProcessName}" Style="{StaticResource FragariaLabel}"/>
-                                            </StackPanel>
-                                            <StackPanel Grid.Column="2" Spacing="2">
-                                                <TextBlock Text="A Наушники" Style="{StaticResource FragariaLabel}"/>
-                                                <Slider Value="{x:Bind HeadphonesPercent, Mode=TwoWay}" Style="{StaticResource FragariaSlider}"/>
-                                            </StackPanel>
-                                            <StackPanel Grid.Column="3" Spacing="2">
-                                                <TextBlock Text="B Стрим" Foreground="{StaticResource FragariaStreamBrush}" Style="{StaticResource FragariaLabel}"/>
-                                                <Slider Value="{x:Bind StreamPercent, Mode=TwoWay}" Style="{StaticResource FragariaSlider}"/>
-                                            </StackPanel>
-                                            <StackPanel Grid.Column="4" VerticalAlignment="Center" Spacing="4">
-                                                <ToggleSwitch Header="Mute" IsOn="{x:Bind Muted, Mode=TwoWay}"/>
-                                                <ToggleSwitch Header="Duck" IsOn="{x:Bind Duckable, Mode=TwoWay}"/>
-                                            </StackPanel>
-                                        </Grid>
-                                    </Expander.Header>
-                                    <StackPanel Spacing="8" Padding="0,8,0,0">
-                                        <TextBlock Text="EQ · Компрессор · Лимит" Style="{StaticResource FragariaLabel}"/>
-                                        <Grid ColumnSpacing="12">
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="*"/>
-                                                <ColumnDefinition Width="*"/>
-                                                <ColumnDefinition Width="*"/>
-                                                <ColumnDefinition Width="*"/>
-                                                <ColumnDefinition Width="*"/>
-                                            </Grid.ColumnDefinitions>
-                                            <Slider Header="Low" Minimum="-12" Maximum="12" Value="{x:Bind EqLow, Mode=TwoWay}"/>
-                                            <Slider Grid.Column="1" Header="Mid" Minimum="-12" Maximum="12" Value="{x:Bind EqMid, Mode=TwoWay}"/>
-                                            <Slider Grid.Column="2" Header="High" Minimum="-12" Maximum="12" Value="{x:Bind EqHigh, Mode=TwoWay}"/>
-                                            <Slider Grid.Column="3" Header="Comp dB" Minimum="-40" Maximum="0" Value="{x:Bind CompThreshold, Mode=TwoWay}"/>
-                                            <Slider Grid.Column="4" Header="Ratio" Minimum="1" Maximum="20" Value="{x:Bind CompRatio, Mode=TwoWay}"/>
-                                        </Grid>
-                                        <Slider Header="Лимит A" Value="{x:Bind HeadphonesLimitPercent, Mode=TwoWay}" Style="{StaticResource FragariaSlider}"/>
-                                        <Slider Header="Лимит B" Value="{x:Bind StreamLimitPercent, Mode=TwoWay}" Style="{StaticResource FragariaSlider}"/>
-                                    </StackPanel>
-                                </Expander>
-                            </Border>
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
-            </StackPanel>
-        </ScrollViewer>
+                <!-- Mixer rack -->
+                <ScrollViewer Grid.Row="1" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled">
+                    <StackPanel Orientation="Horizontal" Spacing="10">
 
-        <!-- Footer -->
-        <Border Grid.Row="3" Grid.ColumnSpan="2" Background="{StaticResource FragariaSurfaceBrush}" Padding="16,8">
+                        <!-- Input section -->
+                        <StackPanel Spacing="6">
+                            <TextBlock Text="HARDWARE INPUTS" Style="{StaticResource FragariaSectionTitle}" Margin="4,0,0,0"/>
+                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                <ItemsControl x:Name="StripsList">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <StackPanel Orientation="Horizontal" Spacing="8"/>
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate x:DataType="viewmodels:StripViewModel"
+                                                      xmlns:viewmodels="using:Fragaria.ViewModels">
+                                            <Border Style="{StaticResource FragariaChannelStrip}"
+                                                    AllowDrop="True" DragOver="Strip_DragOver" Drop="Strip_Drop">
+                                                <StackPanel Spacing="6">
+                                                    <Image Source="{x:Bind Icon}" Width="24" Height="24" HorizontalAlignment="Center"/>
+                                                    <TextBlock Text="{x:Bind Title}" Foreground="{StaticResource FragariaTextBrush}"
+                                                               FontSize="11" FontWeight="SemiBold" TextAlignment="Center"
+                                                               TextTrimming="CharacterEllipsis" MaxWidth="92"/>
+                                                    <TextBlock Text="{x:Bind ProcessName}" Style="{StaticResource FragariaLabel}"
+                                                               TextAlignment="Center" TextTrimming="CharacterEllipsis" MaxWidth="92"/>
+                                                    <Border Height="28" Width="88" Background="#28000000" CornerRadius="4" HorizontalAlignment="Center">
+                                                        <Rectangle Height="2" VerticalAlignment="Center" Margin="4,0"
+                                                                   Fill="{StaticResource FragariaLeafBrush}" Opacity="0.6"/>
+                                                    </Border>
+
+                                                    <Grid ColumnSpacing="4">
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="*"/>
+                                                            <ColumnDefinition Width="*"/>
+                                                        </Grid.ColumnDefinitions>
+                                                        <StackPanel Spacing="2">
+                                                            <TextBlock Text="COMP" Style="{StaticResource FragariaLabel}" TextAlignment="Center"/>
+                                                            <Slider Minimum="0" Maximum="100" Value="{x:Bind CompLevel, Mode=TwoWay}"
+                                                                    Style="{StaticResource FragariaGlassKnobSlider}"/>
+                                                        </StackPanel>
+                                                        <StackPanel Grid.Column="1" Spacing="2">
+                                                            <TextBlock Text="GATE" Style="{StaticResource FragariaLabel}" TextAlignment="Center"/>
+                                                            <Slider Minimum="0" Maximum="100" Value="{x:Bind GateLevel, Mode=TwoWay}"
+                                                                    Style="{StaticResource FragariaGlassKnobSlider}"/>
+                                                        </StackPanel>
+                                                    </Grid>
+
+                                                    <Grid ColumnSpacing="4" HorizontalAlignment="Center">
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="Auto"/>
+                                                            <ColumnDefinition Width="Auto"/>
+                                                        </Grid.ColumnDefinitions>
+                                                        <Slider Grid.Column="0" Style="{StaticResource FragariaVerticalFader}"
+                                                                Value="{x:Bind HeadphonesPercent, Mode=TwoWay}"/>
+                                                        <controls:VerticalLedMeter Grid.Column="1" Level="{x:Bind PeakHp, Mode=OneWay}"/>
+                                                    </Grid>
+
+                                                    <Grid ColumnSpacing="3" HorizontalAlignment="Center">
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="Auto"/>
+                                                            <ColumnDefinition Width="Auto"/>
+                                                            <ColumnDefinition Width="Auto"/>
+                                                            <ColumnDefinition Width="Auto"/>
+                                                        </Grid.ColumnDefinitions>
+                                                        <ToggleButton Grid.Column="0" Content="A1" Style="{StaticResource FragariaRoutingToggle}"
+                                                                      IsChecked="{x:Bind RouteA1, Mode=TwoWay}"/>
+                                                        <ToggleButton Grid.Column="1" Content="A2" Style="{StaticResource FragariaRoutingToggle}"
+                                                                      IsChecked="{x:Bind RouteA2, Mode=TwoWay}"/>
+                                                        <ToggleButton Grid.Column="2" Content="B1" Style="{StaticResource FragariaRoutingToggle}" IsEnabled="False" Opacity="0.4"/>
+                                                        <ToggleButton Grid.Column="3" Content="B2" Style="{StaticResource FragariaRoutingToggle}" IsEnabled="False" Opacity="0.4"/>
+                                                    </Grid>
+
+                                                    <Grid ColumnSpacing="3" HorizontalAlignment="Center">
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="Auto"/>
+                                                            <ColumnDefinition Width="Auto"/>
+                                                            <ColumnDefinition Width="Auto"/>
+                                                        </Grid.ColumnDefinitions>
+                                                        <ToggleButton Grid.Column="0" Content="MONO" Style="{StaticResource FragariaStripBtn}" IsEnabled="{x:Bind IsMicrophone}"/>
+                                                        <ToggleButton Grid.Column="1" Content="S" Style="{StaticResource FragariaStripBtn}"
+                                                                      IsChecked="{x:Bind Solo, Mode=TwoWay}"/>
+                                                        <ToggleButton Grid.Column="2" Content="M" Style="{StaticResource FragariaStripBtn}"
+                                                                      IsChecked="{x:Bind Muted, Mode=TwoWay}"/>
+                                                    </Grid>
+                                                </StackPanel>
+                                            </Border>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+
+                                <!-- Add source -->
+                                <Border Style="{StaticResource FragariaChannelStrip}" Width="108">
+                                    <StackPanel Spacing="8" VerticalAlignment="Center">
+                                        <TextBlock Text="ADD SOURCE" Style="{StaticResource FragariaSectionTitle}" TextAlignment="Center"/>
+                                        <controls:WindowPickerControl x:Name="WindowPicker"/>
+                                        <Button Content="SCAN" Style="{StaticResource FragariaGhostBtn}" Click="Rescan_Click" HorizontalAlignment="Stretch"/>
+                                    </StackPanel>
+                                </Border>
+                            </StackPanel>
+                        </StackPanel>
+
+                        <Rectangle Width="1" Fill="#22FFFFFF" Margin="4,20"/>
+
+                        <!-- Master section -->
+                        <StackPanel Spacing="6">
+                            <TextBlock Text="MASTER OUTPUT" Style="{StaticResource FragariaSectionTitle}" Margin="4,0,0,0"/>
+                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                <!-- A1 Stream -->
+                                <Border Style="{StaticResource FragariaChannelStrip}">
+                                    <StackPanel Spacing="6" HorizontalAlignment="Center">
+                                        <TextBlock Text="A1" Foreground="{StaticResource FragariaLeafBrush}" FontWeight="Bold" FontSize="13" TextAlignment="Center"/>
+                                        <TextBlock Text="STREAM MIX" Style="{StaticResource FragariaLabel}" TextAlignment="Center"/>
+                                        <Grid ColumnSpacing="4">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+                                            <Slider Grid.Column="0" x:Name="MasterStreamSlider" Style="{StaticResource FragariaVerticalFader}" ValueChanged="Master_Changed"/>
+                                            <controls:VerticalLedMeter x:Name="MasterStreamMeter" Grid.Column="1" Level="0"/>
+                                        </Grid>
+                                        <Slider x:Name="MasterStreamLimitSlider" Header="LIM" Style="{StaticResource FragariaSlider}" ValueChanged="Master_Changed" Maximum="100"/>
+                                        <controls:SpectrumMeter x:Name="MasterStreamSpectrum" Width="88" Height="28"/>
+                                        <ToggleButton Content="SEL" Style="{StaticResource FragariaStripBtn}" IsChecked="True"/>
+                                    </StackPanel>
+                                </Border>
+                                <!-- A2 Monitor -->
+                                <Border Style="{StaticResource FragariaChannelStrip}">
+                                    <StackPanel Spacing="6" HorizontalAlignment="Center">
+                                        <TextBlock Text="A2" Foreground="{StaticResource FragariaLeafBrush}" FontWeight="Bold" FontSize="13" TextAlignment="Center"/>
+                                        <TextBlock Text="MONITOR" Style="{StaticResource FragariaLabel}" TextAlignment="Center"/>
+                                        <Grid ColumnSpacing="4">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+                                            <Slider Grid.Column="0" x:Name="MasterHpSlider" Style="{StaticResource FragariaVerticalFader}" ValueChanged="Master_Changed"/>
+                                            <controls:VerticalLedMeter x:Name="MasterHpMeter" Grid.Column="1" Level="0"/>
+                                        </Grid>
+                                        <Slider x:Name="MasterHpLimitSlider" Header="LIM" Style="{StaticResource FragariaSlider}" ValueChanged="Master_Changed" Maximum="100"/>
+                                        <controls:SpectrumMeter x:Name="MasterHpSpectrum" Width="88" Height="28"/>
+                                        <ToggleButton Content="SEL" Style="{StaticResource FragariaStripBtn}" IsChecked="True"/>
+                                    </StackPanel>
+                                </Border>
+                                <!-- B1 Record -->
+                                <Border Style="{StaticResource FragariaChannelStrip}">
+                                    <StackPanel Spacing="6" HorizontalAlignment="Center">
+                                        <TextBlock Text="B1" Foreground="{StaticResource FragariaRoseBrush}" FontWeight="Bold" FontSize="13" TextAlignment="Center"/>
+                                        <TextBlock Text="RECORD BUS" Style="{StaticResource FragariaLabel}" TextAlignment="Center"/>
+                                        <Border Width="28" Height="140" Background="#22FFFFFF" CornerRadius="4" HorizontalAlignment="Center">
+                                            <TextBlock x:Name="RecordIndicator" Text="OFF" Style="{StaticResource FragariaLabel}"
+                                                       HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        </Border>
+                                        <ToggleButton x:Name="RecordBusToggle" Content="ARM" Style="{StaticResource FragariaStripBtn}" Click="Record_Click"/>
+                                    </StackPanel>
+                                </Border>
+                                <!-- B2 Music -->
+                                <Border Style="{StaticResource FragariaChannelStrip}">
+                                    <StackPanel Spacing="6" HorizontalAlignment="Center">
+                                        <TextBlock Text="B2" Foreground="{StaticResource FragariaRoseBrush}" FontWeight="Bold" FontSize="13" TextAlignment="Center"/>
+                                        <TextBlock Text="MUSIC BUS" Style="{StaticResource FragariaLabel}" TextAlignment="Center"/>
+                                        <Slider Style="{StaticResource FragariaVerticalFader}" IsEnabled="False" Opacity="0.35" Value="70"/>
+                                        <ToggleButton Content="SEL" Style="{StaticResource FragariaStripBtn}" IsEnabled="False" Opacity="0.4"/>
+                                    </StackPanel>
+                                </Border>
+                            </StackPanel>
+                        </StackPanel>
+                    </StackPanel>
+                </ScrollViewer>
+
+                <!-- Routing summary -->
+                <Border Grid.Row="2" Style="{StaticResource FragariaGlassPanel}" Padding="12,8" Margin="0,8,0,0">
+                    <StackPanel Orientation="Horizontal" Spacing="16">
+                        <TextBlock Text="ROUTING MATRIX" Style="{StaticResource FragariaSectionTitle}" VerticalAlignment="Center"/>
+                        <TextBlock Text="A1 → Stream · A2 → Monitor · Mic → A1+A2 · Apps → per-strip"
+                                   Style="{StaticResource FragariaMono}" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Border>
+            </Grid>
+
+            <!-- ── ROUTING ── -->
+            <Grid x:Name="RoutingPage" Visibility="Collapsed">
+                <Border Style="{StaticResource FragariaCard}">
+                    <StackPanel Spacing="12">
+                        <TextBlock Text="ROUTING MATRIX" Style="{StaticResource FragariaTitle}"/>
+                        <TextBlock Text="A1 = Stream Mix · A2 = Monitor Mix · Toggle routing per channel strip on the Mixer page."
+                                   Style="{StaticResource FragariaLabel}" TextWrapping="Wrap"/>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="160"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <TextBlock Style="{StaticResource FragariaLabel}"/>
+                            <TextBlock Grid.Column="1" Text="A1 STREAM" Style="{StaticResource FragariaLabel}" TextAlignment="Center"/>
+                            <TextBlock Grid.Column="2" Text="A2 MONITOR" Style="{StaticResource FragariaLabel}" TextAlignment="Center"/>
+                            <TextBlock Grid.Column="3" Text="B1 REC" Style="{StaticResource FragariaLabel}" TextAlignment="Center"/>
+                            <TextBlock Grid.Column="4" Text="B2 MUSIC" Style="{StaticResource FragariaLabel}" TextAlignment="Center"/>
+                            <TextBlock Grid.Row="1" Text="Microphone" Style="{StaticResource FragariaMono}" VerticalAlignment="Center"/>
+                            <FontIcon Grid.Row="1" Grid.Column="1" Glyph="&#xE73E;" Foreground="{StaticResource FragariaLeafBrush}" HorizontalAlignment="Center"/>
+                            <FontIcon Grid.Row="1" Grid.Column="2" Glyph="&#xE73E;" Foreground="{StaticResource FragariaLeafBrush}" HorizontalAlignment="Center"/>
+                        </Grid>
+                        <controls:WindowPickerControl x:Name="RoutingWindowPicker" Visibility="Collapsed"/>
+                    </StackPanel>
+                </Border>
+            </Grid>
+
+            <!-- ── EFFECTS ── -->
+            <Grid x:Name="EffectsPage" Visibility="Collapsed">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <StackPanel Spacing="12">
+                        <Border Style="{StaticResource FragariaCard}">
+                            <StackPanel Spacing="10">
+                                <TextBlock Text="EQUALIZER" Style="{StaticResource FragariaTitle}"/>
+                                <controls:SpectrumMeter x:Name="EffectsSpectrum" Width="400" Height="80"/>
+                                <Grid ColumnSpacing="12">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Slider x:Name="FxEqLow" Header="LOW" Minimum="-12" Maximum="12" Style="{StaticResource FragariaSlider}"/>
+                                    <Slider Grid.Column="1" x:Name="FxEqMid" Header="MID" Minimum="-12" Maximum="12" Style="{StaticResource FragariaSlider}"/>
+                                    <Slider Grid.Column="2" x:Name="FxEqHigh" Header="HIGH" Minimum="-12" Maximum="12" Style="{StaticResource FragariaSlider}"/>
+                                </Grid>
+                            </StackPanel>
+                        </Border>
+                        <Border Style="{StaticResource FragariaCard}">
+                            <StackPanel Spacing="10">
+                                <TextBlock Text="COMPRESSOR" Style="{StaticResource FragariaTitle}"/>
+                                <Grid ColumnSpacing="12">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Slider x:Name="FxCompThreshold" Header="THRESHOLD dB" Minimum="-40" Maximum="0" Style="{StaticResource FragariaSlider}"/>
+                                    <Slider Grid.Column="1" x:Name="FxCompRatio" Header="RATIO" Minimum="1" Maximum="20" Style="{StaticResource FragariaSlider}"/>
+                                </Grid>
+                            </StackPanel>
+                        </Border>
+                        <Border Style="{StaticResource FragariaCard}">
+                            <StackPanel Spacing="8">
+                                <TextBlock Text="GLOBAL DSP" Style="{StaticResource FragariaTitle}"/>
+                                <ToggleSwitch x:Name="NoiseGateToggle" Header="Noise Gate"/>
+                                <ToggleSwitch x:Name="DuckingToggle" Header="Ducking"/>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+                </ScrollViewer>
+            </Grid>
+
+            <!-- ── SETTINGS ── -->
+            <Grid x:Name="SettingsPage" Visibility="Collapsed">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <Grid ColumnSpacing="16">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="200"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Border Style="{StaticResource FragariaGlassPanel}" Padding="8">
+                            <StackPanel Spacing="4">
+                                <Button Content="General" Style="{StaticResource FragariaNavBtnActive}" HorizontalAlignment="Stretch" HorizontalContentAlignment="Left"/>
+                                <Button Content="Audio Devices" Style="{StaticResource FragariaNavBtn}" HorizontalAlignment="Stretch" HorizontalContentAlignment="Left"/>
+                                <Button Content="Streaming" Style="{StaticResource FragariaNavBtn}" HorizontalAlignment="Stretch" HorizontalContentAlignment="Left"/>
+                                <Button Content="Driver" Style="{StaticResource FragariaNavBtn}" HorizontalAlignment="Stretch" HorizontalContentAlignment="Left"/>
+                            </StackPanel>
+                        </Border>
+                        <Border Grid.Column="1" Style="{StaticResource FragariaCard}">
+                            <StackPanel Spacing="14" x:Name="SettingsPanel" Width="480">
+                                <TextBlock Text="GENERAL" Style="{StaticResource FragariaTitle}"/>
+                                <ToggleSwitch x:Name="AutoStartToggle" Header="Launch at Windows startup"/>
+                                <ToggleSwitch x:Name="TrayToggle" Header="Minimize to system tray" IsOn="True"/>
+                                <ToggleSwitch x:Name="ObsToggle" Header="OBS WebSocket integration"/>
+                                <TextBlock Text="ENGINE" Style="{StaticResource FragariaSectionTitle}"/>
+                                <ComboBox Header="Sample Rate" SelectedIndex="0" Width="200">
+                                    <ComboBoxItem Content="48000 Hz"/>
+                                    <ComboBoxItem Content="44100 Hz"/>
+                                </ComboBox>
+                                <ComboBox Header="Buffer Size" SelectedIndex="1" Width="200">
+                                    <ComboBoxItem Content="128 samples"/>
+                                    <ComboBoxItem Content="256 samples"/>
+                                    <ComboBoxItem Content="512 samples"/>
+                                </ComboBox>
+                                <TextBlock Text="THEME" Style="{StaticResource FragariaSectionTitle}"/>
+                                <ComboBox SelectedIndex="0" Width="200">
+                                    <ComboBoxItem Content="Fragaria Glass"/>
+                                </ComboBox>
+                            </StackPanel>
+                        </Border>
+                    </Grid>
+                </ScrollViewer>
+            </Grid>
+        </Grid>
+
+        <!-- ═══ FOOTER NAV ═══ -->
+        <Border Grid.Row="2" Background="#CC141418" BorderBrush="#22B8203A" BorderThickness="0,1,0,0" Padding="12,6">
             <Grid>
-                <StackPanel Orientation="Horizontal" Spacing="16">
-                    <ToggleSwitch x:Name="AutoStartToggle" Header="Автозапуск"/>
-                    <ToggleSwitch x:Name="TrayToggle" Header="Трей" IsOn="True"/>
-                    <ToggleSwitch x:Name="NoiseGateToggle" Header="Noise Gate"/>
-                    <ToggleSwitch x:Name="DuckingToggle" Header="Ducking" IsOn="True"/>
-                    <ToggleSwitch x:Name="ObsToggle" Header="OBS WS"/>
+                <StackPanel Orientation="Horizontal" Spacing="4">
+                    <Button x:Name="NavMixer" Content="MIXER" Style="{StaticResource FragariaNavBtnActive}" Click="NavMixer_Click"/>
+                    <Button x:Name="NavRouting" Content="ROUTING" Style="{StaticResource FragariaNavBtn}" Click="NavRouting_Click"/>
+                    <Button x:Name="NavEffects" Content="EFFECTS" Style="{StaticResource FragariaNavBtn}" Click="NavEffects_Click"/>
+                    <Button x:Name="NavSettings" Content="SETTINGS" Style="{StaticResource FragariaNavBtn}" Click="NavSettings_Click"/>
                 </StackPanel>
-                <TextBlock HorizontalAlignment="Right" Foreground="{StaticResource FragariaMutedBrush}" FontSize="11"
-                           Text="Fragaria — 10 функций: окна, EQ, компрессор, ducking, запись, OBS, спектр, хоткеи, драйвер"/>
+                <StackPanel Orientation="Horizontal" Spacing="20" HorizontalAlignment="Right">
+                    <TextBlock x:Name="CpuLabel" Text="CPU 0.0%" Style="{StaticResource FragariaMono}"/>
+                    <TextBlock Text="48.0 kHz" Style="{StaticResource FragariaMono}"/>
+                    <TextBlock x:Name="ClockLabel" Style="{StaticResource FragariaMono}"/>
+                </StackPanel>
             </Grid>
         </Border>
     </Grid>

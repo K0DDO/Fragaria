@@ -42,6 +42,8 @@ public sealed class AudioStrip
     public bool Muted { get; set; }
     public bool Solo { get; set; }
     public bool Duckable { get; set; } = true;
+    public bool RouteStream { get; set; } = true;
+    public bool RouteHeadphones { get; set; } = true;
 
     public EqSettings Eq { get; set; } = new();
     public CompressorSettings Compressor { get; set; } = new();
@@ -51,10 +53,10 @@ public sealed class AudioStrip
     public float[] Spectrum { get; set; } = new float[32];
 
     public float EffectiveHeadphones =>
-        Muted ? 0f : Math.Min(HeadphonesVolume, HeadphonesLimit);
+        Muted || !RouteHeadphones ? 0f : Math.Min(HeadphonesVolume, HeadphonesLimit);
 
     public float EffectiveStream =>
-        Muted ? 0f : Math.Min(StreamVolume, StreamLimit);
+        Muted || !RouteStream ? 0f : Math.Min(StreamVolume, StreamLimit);
 }
 
 public sealed class MasterBus

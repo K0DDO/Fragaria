@@ -13,7 +13,7 @@ public sealed class SpectrumMeter : UserControl
 
     public SpectrumMeter()
     {
-        _canvas = new Canvas { Width = 120, Height = 48 };
+        _canvas = new Canvas { Width = 88, Height = 28 };
         _bars = new Rectangle[BandCount];
         for (int i = 0; i < BandCount; i++)
         {
@@ -34,11 +34,11 @@ public sealed class SpectrumMeter : UserControl
         if (bands.Length < BandCount) return;
         for (int i = 0; i < BandCount; i++)
         {
-            var h = Math.Clamp(bands[i] * 400, 2, 46);
-            Canvas.SetLeft(_bars[i], i * 3.7);
-            Canvas.SetTop(_bars[i], 48 - h);
+            var h = Math.Clamp(bands[i] * 400, 2, 26);
+            Canvas.SetLeft(_bars[i], i * 2.7);
+            Canvas.SetTop(_bars[i], 28 - h);
             _bars[i].Height = h;
-            _bars[i].Fill = h > 38
+            _bars[i].Fill = h > 22
                 ? (Brush)Application.Current.Resources["FragariaPrimaryBrush"]
                 : (Brush)Application.Current.Resources["FragariaLeafBrush"];
         }
