@@ -1,3 +1,4 @@
+using Fragaria.Services;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
@@ -21,7 +22,7 @@ public sealed class SpectrumMeter : UserControl
             {
                 Width = 2.5,
                 RadiusX = 1, RadiusY = 1,
-                Fill = (Brush)Application.Current.Resources["FragariaPrimaryBrush"]
+                Fill = ThemeBrushes.Primary
             };
             _bars[i] = bar;
             _canvas.Children.Add(bar);
@@ -38,9 +39,7 @@ public sealed class SpectrumMeter : UserControl
             Canvas.SetLeft(_bars[i], i * 2.7);
             Canvas.SetTop(_bars[i], 28 - h);
             _bars[i].Height = h;
-            _bars[i].Fill = h > 22
-                ? (Brush)Application.Current.Resources["FragariaPrimaryBrush"]
-                : (Brush)Application.Current.Resources["FragariaLeafBrush"];
+            _bars[i].Fill = h > 22 ? ThemeBrushes.Primary : ThemeBrushes.Leaf;
         }
     }
 }

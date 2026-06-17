@@ -28,7 +28,9 @@ public partial class App : Application
         catch (Exception ex)
         {
             AppLogger.Error("OnLaunched failed", ex);
-            throw;
+            NativeDialog.ShowFatal(
+                "Fragaria",
+                $"Не удалось открыть окно: {ex.Message}\n\n{AppLogger.LogFilePath}");
         }
     }
 }

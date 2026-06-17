@@ -41,8 +41,18 @@ jobs:
             /p:SelfContained=true ^
             /p:WindowsAppSDKSelfContained=true ^
             /p:EnableMsixTooling=false ^
-            /p:DisableMrtCoreCompilation=true ^
             /p:PublishDir=%CD%\dist\Fragaria\
+
+      - name: Verify publish output
+        shell: pwsh
+        working-directory: Fragaria
+        run: |
+          $dist = "dist/Fragaria"
+          if (-not (Test-Path "$dist/Fragaria.exe")) { throw "Fragaria.exe missing" }
+          if (-not (Test-Path "$dist/Fragaria.pri")) { throw "Fragaria.pri missing — XAML resources not packaged" }
+          $xbf = Get-ChildItem -Path $dist -Recurse -Filter *.xbf -ErrorAction SilentlyContinue
+          if (-not $xbf) { throw "No .xbf files — XAML compile failed" }
+          Write-Host "Publish OK: exe + pri + $($xbf.Count) xbf file(s)"
 
       - name: Install Inno Setup 6
         shell: pwsh

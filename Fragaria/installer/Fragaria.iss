@@ -28,7 +28,7 @@ WizardStyle=modern
 PrivilegesRequired=admin
 ArchitecturesAllowed=x64compatible
 ArchitecturesInstallIn64BitMode=x64compatible
-MinVersion=10.0.17763
+MinVersion=10.0.19041
 DisableProgramGroupPage=yes
 UninstallDisplayIcon={app}\{#MyAppExeName}
 VersionInfoVersion=1.0.0.0
@@ -43,15 +43,13 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 
 [Tasks]
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon,'Fragaria'}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
-Name: "installvcredist"; Description: "Установить Microsoft Visual C++ 2015–2022 Redistributable (x64)"; GroupDescription: "Зависимости:"; Flags: checkedonce
-Name: "installwebview"; Description: "Установить Microsoft Edge WebView2 Runtime (нужен для WinUI)"; GroupDescription: "Зависимости:"; Flags: checkedonce
 Name: "launchafter"; Description: "Запустить Fragaria после установки"; GroupDescription: "Дополнительно:"; Flags: checkedonce
 Name: "autostart"; Description: "Запускать Fragaria при входе в Windows"; GroupDescription: "Дополнительно:"; Flags: unchecked
 
 [Files]
 Source: "{#PublishDir}\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "{#RedistDir}\vc_redist.x64.exe"; DestDir: "{tmp}"; Flags: deleteafterinstall; Tasks: installvcredist; Check: VcRedistNeeded
-Source: "{#RedistDir}\MicrosoftEdgeWebview2Setup.exe"; DestDir: "{tmp}"; Flags: deleteafterinstall; Tasks: installwebview; Check: WebView2Needed
+Source: "{#RedistDir}\vc_redist.x64.exe"; DestDir: "{tmp}"; Flags: deleteafterinstall
+Source: "{#RedistDir}\MicrosoftEdgeWebview2Setup.exe"; DestDir: "{tmp}"; Flags: deleteafterinstall
 
 [Icons]
 Name: "{group}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
@@ -59,8 +57,8 @@ Name: "{group}\Удалить {#MyAppName}"; Filename: "{uninstallexe}"
 Name: "{autodesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: desktopicon
 
 [Run]
-Filename: "{tmp}\vc_redist.x64.exe"; Parameters: "/install /quiet /norestart"; StatusMsg: "Установка Visual C++ Redistributable..."; Flags: waituntilterminated; Tasks: installvcredist; Check: VcRedistNeeded
-Filename: "{tmp}\MicrosoftEdgeWebview2Setup.exe"; Parameters: "/silent /install"; StatusMsg: "Установка WebView2 Runtime..."; Flags: waituntilterminated; Tasks: installwebview; Check: WebView2Needed
+Filename: "{tmp}\vc_redist.x64.exe"; Parameters: "/install /quiet /norestart"; StatusMsg: "Установка Visual C++ Redistributable..."; Flags: waituntilterminated
+Filename: "{tmp}\MicrosoftEdgeWebview2Setup.exe"; Parameters: "/silent /install"; StatusMsg: "Установка WebView2 Runtime..."; Flags: waituntilterminated; Check: WebView2Needed
 Filename: "{app}\{#MyAppExeName}"; Description: "Запустить {#MyAppName}"; Flags: nowait postinstall skipifsilent; Tasks: launchafter
 
 [Registry]
@@ -77,12 +75,6 @@ begin
     Result := False
   else
     Result := True;
-end;
-
-function VcRedistNeeded: Boolean;
-begin
-  { Always offer — installer is idempotent }
-  Result := True;
 end;
 
 procedure CurStepChanged(CurStep: TSetupStep);

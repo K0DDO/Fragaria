@@ -12,10 +12,12 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <WindowsPackageType>None</WindowsPackageType>
     <WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
+    <WindowsAppSdkUndockedRegFreeWinRTInitialize>true</WindowsAppSdkUndockedRegFreeWinRTInitialize>
+    <GenerateLibraryLayout>true</GenerateLibraryLayout>
+    <EnableDefaultApplicationDefinition>false</EnableDefaultApplicationDefinition>
+    <WindowsAppSDKBootstrapAutoInitializeOptions>None</WindowsAppSDKBootstrapAutoInitializeOptions>
     <EnableMsixTooling>false</EnableMsixTooling>
     <GenerateAppxPackageOnBuild>false</GenerateAppxPackageOnBuild>
-    <DisableMrtCoreCompilation>true</DisableMrtCoreCompilation>
-    <EnableCoreMrtTooling>false</EnableCoreMrtTooling>
     <EnableWindowsForms>true</EnableWindowsForms>
     <PublishReadyToRun>true</PublishReadyToRun>
     <WindowsSdkPackageVersion>10.0.26100.38</WindowsSdkPackageVersion>
@@ -36,5 +38,14 @@
   <ItemGroup>
     <Content Include="..\presets\**" Link="presets\%(RecursiveDir)%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
     <Content Include="Assets\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Page Update="Themes\FragariaTheme.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Themes\FragariaGlassSliders.xaml">
+      <SubType>Designer</SubType>
+    </Page>
   </ItemGroup>
 </Project>

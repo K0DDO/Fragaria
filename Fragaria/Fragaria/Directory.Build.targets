@@ -1,5 +1,0 @@
-<Project>
-  <!-- Skip PRI/AppX tasks that require full Visual Studio on CI -->
-  <Target Name="ExpandPriContent" />
-  <Target Name="_GenerateProjectPriConfigurationFiles" />
-</Project>

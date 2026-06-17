@@ -1,3 +1,4 @@
+using Fragaria.Services;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
@@ -39,7 +40,7 @@ public sealed class WindowPickerControl : UserControl
                 new TextBlock
                 {
                     Text = "Перетащи окно на дорожку или кликни",
-                    Foreground = (Brush)Application.Current.Resources["FragariaMutedBrush"],
+                    Foreground = ThemeBrushes.Muted,
                     FontSize = 12
                 },
                 _list
