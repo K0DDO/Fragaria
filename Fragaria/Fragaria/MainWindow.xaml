@@ -109,13 +109,11 @@
                                                         </Grid.ColumnDefinitions>
                                                         <StackPanel Spacing="2">
                                                             <TextBlock Text="COMP" Style="{StaticResource FragariaLabel}" TextAlignment="Center"/>
-                                                            <Slider Minimum="0" Maximum="100" Value="{x:Bind CompLevel, Mode=TwoWay}"
-                                                                    Style="{StaticResource FragariaGlassKnobSlider}"/>
+                                                            <controls:KnobControl Value="{x:Bind CompLevel, Mode=TwoWay}" Header="COMP"/>
                                                         </StackPanel>
                                                         <StackPanel Grid.Column="1" Spacing="2">
                                                             <TextBlock Text="GATE" Style="{StaticResource FragariaLabel}" TextAlignment="Center"/>
-                                                            <Slider Minimum="0" Maximum="100" Value="{x:Bind GateLevel, Mode=TwoWay}"
-                                                                    Style="{StaticResource FragariaGlassKnobSlider}"/>
+                                                            <controls:KnobControl Value="{x:Bind GateLevel, Mode=TwoWay}" Header="GATE"/>
                                                         </StackPanel>
                                                     </Grid>
 
@@ -124,8 +122,7 @@
                                                             <ColumnDefinition Width="Auto"/>
                                                             <ColumnDefinition Width="Auto"/>
                                                         </Grid.ColumnDefinitions>
-                                                        <Slider Grid.Column="0" Style="{StaticResource FragariaVerticalFader}"
-                                                                Value="{x:Bind HeadphonesPercent, Mode=TwoWay}"/>
+                                                        <controls:VerticalFaderControl Grid.Column="0" Value="{x:Bind HeadphonesPercent, Mode=TwoWay}"/>
                                                         <controls:VerticalLedMeter Grid.Column="1" Level="{x:Bind PeakHp, Mode=OneWay}"/>
                                                     </Grid>
 
@@ -189,10 +186,12 @@
                                                 <ColumnDefinition Width="Auto"/>
                                                 <ColumnDefinition Width="Auto"/>
                                             </Grid.ColumnDefinitions>
-                                            <Slider Grid.Column="0" x:Name="MasterStreamSlider" Style="{StaticResource FragariaVerticalFader}" ValueChanged="Master_Changed"/>
+                                            <Slider Grid.Column="0" x:Name="MasterStreamSlider" Orientation="Vertical"
+                                                    Minimum="0" Maximum="100" Height="140" Width="32" ValueChanged="Master_Changed"/>
                                             <controls:VerticalLedMeter x:Name="MasterStreamMeter" Grid.Column="1" Level="0"/>
                                         </Grid>
-                                        <Slider x:Name="MasterStreamLimitSlider" Header="LIM" Style="{StaticResource FragariaSlider}" ValueChanged="Master_Changed" Maximum="100"/>
+                                        <Slider x:Name="MasterStreamLimitSlider" Minimum="0" Maximum="100"
+                                                Style="{StaticResource FragariaSlider}" ValueChanged="Master_Changed"/>
                                         <controls:SpectrumMeter x:Name="MasterStreamSpectrum" Width="88" Height="28"/>
                                         <ToggleButton Content="SEL" Style="{StaticResource FragariaStripBtn}" IsChecked="True"/>
                                     </StackPanel>
@@ -207,10 +206,12 @@
                                                 <ColumnDefinition Width="Auto"/>
                                                 <ColumnDefinition Width="Auto"/>
                                             </Grid.ColumnDefinitions>
-                                            <Slider Grid.Column="0" x:Name="MasterHpSlider" Style="{StaticResource FragariaVerticalFader}" ValueChanged="Master_Changed"/>
+                                            <Slider Grid.Column="0" x:Name="MasterHpSlider" Orientation="Vertical"
+                                                    Minimum="0" Maximum="100" Height="140" Width="32" ValueChanged="Master_Changed"/>
                                             <controls:VerticalLedMeter x:Name="MasterHpMeter" Grid.Column="1" Level="0"/>
                                         </Grid>
-                                        <Slider x:Name="MasterHpLimitSlider" Header="LIM" Style="{StaticResource FragariaSlider}" ValueChanged="Master_Changed" Maximum="100"/>
+                                        <Slider x:Name="MasterHpLimitSlider" Minimum="0" Maximum="100"
+                                                Style="{StaticResource FragariaSlider}" ValueChanged="Master_Changed"/>
                                         <controls:SpectrumMeter x:Name="MasterHpSpectrum" Width="88" Height="28"/>
                                         <ToggleButton Content="SEL" Style="{StaticResource FragariaStripBtn}" IsChecked="True"/>
                                     </StackPanel>
@@ -232,8 +233,8 @@
                                     <StackPanel Spacing="6" HorizontalAlignment="Center">
                                         <TextBlock Text="B2" Foreground="{StaticResource FragariaRoseBrush}" FontWeight="Bold" FontSize="13" TextAlignment="Center"/>
                                         <TextBlock Text="MUSIC BUS" Style="{StaticResource FragariaLabel}" TextAlignment="Center"/>
-                                        <Slider x:Name="MasterMusicSlider" Style="{StaticResource FragariaVerticalFader}"
-                                                Value="70" ValueChanged="Master_Changed"/>
+                                        <Slider x:Name="MasterMusicSlider" Orientation="Vertical"
+                                                Minimum="0" Maximum="100" Height="140" Width="32" ValueChanged="Master_Changed"/>
                                         <ToggleButton Content="SEL" Style="{StaticResource FragariaStripBtn}" IsChecked="True"/>
                                     </StackPanel>
                                 </Border>
@@ -299,9 +300,9 @@
                                         <ColumnDefinition Width="*"/>
                                         <ColumnDefinition Width="*"/>
                                     </Grid.ColumnDefinitions>
-                                    <Slider x:Name="FxEqLow" Header="LOW" Minimum="-12" Maximum="12" Style="{StaticResource FragariaSlider}"/>
-                                    <Slider Grid.Column="1" x:Name="FxEqMid" Header="MID" Minimum="-12" Maximum="12" Style="{StaticResource FragariaSlider}"/>
-                                    <Slider Grid.Column="2" x:Name="FxEqHigh" Header="HIGH" Minimum="-12" Maximum="12" Style="{StaticResource FragariaSlider}"/>
+                                    <Slider x:Name="FxEqLow" Minimum="-12" Maximum="12" Value="0" Style="{StaticResource FragariaSlider}"/>
+                                    <Slider Grid.Column="1" x:Name="FxEqMid" Minimum="-12" Maximum="12" Value="0" Style="{StaticResource FragariaSlider}"/>
+                                    <Slider Grid.Column="2" x:Name="FxEqHigh" Minimum="-12" Maximum="12" Value="0" Style="{StaticResource FragariaSlider}"/>
                                 </Grid>
                             </StackPanel>
                         </Border>
@@ -313,8 +314,8 @@
                                         <ColumnDefinition Width="*"/>
                                         <ColumnDefinition Width="*"/>
                                     </Grid.ColumnDefinitions>
-                                    <Slider x:Name="FxCompThreshold" Header="THRESHOLD dB" Minimum="-40" Maximum="0" Style="{StaticResource FragariaSlider}"/>
-                                    <Slider Grid.Column="1" x:Name="FxCompRatio" Header="RATIO" Minimum="1" Maximum="20" Style="{StaticResource FragariaSlider}"/>
+                                    <Slider x:Name="FxCompThreshold" Minimum="-40" Maximum="0" Value="-12" Style="{StaticResource FragariaSlider}"/>
+                                    <Slider Grid.Column="1" x:Name="FxCompRatio" Minimum="1" Maximum="20" Value="4" Style="{StaticResource FragariaSlider}"/>
                                 </Grid>
                             </StackPanel>
                         </Border>

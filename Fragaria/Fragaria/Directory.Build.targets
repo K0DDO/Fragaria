@@ -12,6 +12,13 @@
       SkipUnchangedFiles="true"
       Condition="Exists('$(OutputPath)$(AssemblyName).pri')" />
 
+    <!-- EnableMsixTooling emits resources.pri; unpackaged MRT expects {AssemblyName}.pri -->
+    <Copy
+      SourceFiles="$(OutputPath)resources.pri"
+      DestinationFiles="$(_PublishOut)$(AssemblyName).pri"
+      SkipUnchangedFiles="true"
+      Condition="!Exists('$(OutputPath)$(AssemblyName).pri') and Exists('$(OutputPath)resources.pri')" />
+
     <ItemGroup>
       <_PublishXbf Include="$(OutputPath)**\*.xbf" />
       <_PublishXaml Include="$(OutputPath)**\*.xaml" />

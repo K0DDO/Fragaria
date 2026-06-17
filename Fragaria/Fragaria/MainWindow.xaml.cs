@@ -33,7 +33,15 @@ public sealed partial class MainWindow : Window
 
     public MainWindow()
     {
-        InitializeComponent();
+        try
+        {
+            InitializeComponent();
+        }
+        catch (Exception ex)
+        {
+            AppLogger.Error($"MainWindow.InitializeComponent failed (0x{ex.HResult:X8})", ex);
+            throw;
+        }
         Title = "Fragaria";
         ConfigureWindow();
 
@@ -48,6 +56,7 @@ public sealed partial class MainWindow : Window
         MasterStreamSlider.Value = 100;
         MasterHpLimitSlider.Value = 100;
         MasterStreamLimitSlider.Value = 100;
+        MasterMusicSlider.Value = 70;
 
         AutoStartToggle.IsOn = AutoStartService.IsEnabled();
         TrayToggle.IsOn = _settings.Load().MinimizeToTray;
@@ -87,6 +96,7 @@ public sealed partial class MainWindow : Window
         Activated += async (_, _) =>
         {
             if (_initialized) return;
+            if (Content.XamlRoot is null) return;
             _initialized = true;
             await InitializeAppAsync();
         };
@@ -156,12 +166,15 @@ public sealed partial class MainWindow : Window
             Opacity = 0.7
         });
 
+        var xamlRoot = Content.XamlRoot;
+        if (xamlRoot is null) return;
+
         var dlg = new ContentDialog
         {
             Title = "Первый запуск",
             Content = panel,
             PrimaryButtonText = "Продолжить",
-            XamlRoot = Content.XamlRoot
+            XamlRoot = xamlRoot
         };
         await dlg.ShowAsync();
         _vm.CompleteSetup(
@@ -172,12 +185,15 @@ public sealed partial class MainWindow : Window
 
     private async Task ShowErrorDialogAsync(Exception ex)
     {
+        var xamlRoot = Content.XamlRoot;
+        if (xamlRoot is null) return;
+
         var dlg = new ContentDialog
         {
             Title = "Fragaria — ошибка",
             Content = $"{ex.Message}\n\nЛог: {AppLogger.LogFilePath}",
             CloseButtonText = "OK",
-            XamlRoot = Content.XamlRoot
+            XamlRoot = xamlRoot
         };
         await dlg.ShowAsync();
     }

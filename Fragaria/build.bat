@@ -19,12 +19,16 @@ echo Очистка...
 if exist "%OUT%" rmdir /s /q "%OUT%"
 
 echo Публикация (self-contained, win-x64)...
-dotnet publish Fragaria\Fragaria.csproj ^
-    -c Release ^
-    -r win-x64 ^
-    --self-contained true ^
-    -p:WindowsAppSDKSelfContained=true ^
-    -o "%OUT%"
+dotnet msbuild Fragaria\Fragaria.csproj ^
+    /restore ^
+    /t:Publish ^
+    /p:Configuration=Release ^
+    /p:Platform=x64 ^
+    /p:RuntimeIdentifier=win-x64 ^
+    /p:SelfContained=true ^
+    /p:WindowsAppSDKSelfContained=true ^
+    /p:EnableMsixTooling=false ^
+    /p:PublishDir=%OUT%\
 
 if errorlevel 1 (
     echo.

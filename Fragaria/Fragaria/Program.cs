@@ -1,7 +1,6 @@
 using Fragaria.Services;
 using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml;
-using Microsoft.Windows.ApplicationModel.DynamicDependency;
 using WinRT;
 
 namespace Fragaria;
@@ -13,18 +12,12 @@ public static class Program
     {
         AppLogger.Info("Fragaria starting");
 
+        Environment.SetEnvironmentVariable(
+            "MICROSOFT_WINDOWSAPPRUNTIME_BASE_DIRECTORY",
+            AppContext.BaseDirectory);
+
         if (!RuntimeChecks.EnsureWebView2())
             return;
-
-        if (!Bootstrap.TryInitialize(0x00010006, out int hr))
-        {
-            AppLogger.Error($"Bootstrap.TryInitialize failed: 0x{hr:X8}");
-            NativeDialog.ShowFatal(
-                "Fragaria",
-                $"Не удалось инициализировать Windows App SDK (0x{hr:X8}).\n\n" +
-                $"Переустановите Fragaria или установите WebView2 Runtime.\n\n{AppLogger.LogFilePath}");
-            return;
-        }
 
         try
         {
@@ -43,10 +36,6 @@ public static class Program
             NativeDialog.ShowFatal(
                 "Fragaria",
                 $"Ошибка запуска: {ex.Message}\n\n{AppLogger.LogFilePath}");
-        }
-        finally
-        {
-            Bootstrap.Shutdown();
         }
     }
 }

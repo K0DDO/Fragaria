@@ -14,12 +14,16 @@ if (-not (Get-Command dotnet -ErrorAction SilentlyContinue)) {
 if (Test-Path $out) { Remove-Item $out -Recurse -Force }
 
 Write-Host "Публикация..." -ForegroundColor Cyan
-dotnet publish Fragaria\Fragaria.csproj `
-    -c Release `
-    -r win-x64 `
-    --self-contained true `
-    -p:WindowsAppSDKSelfContained=true `
-    -o $out
+dotnet msbuild Fragaria\Fragaria.csproj `
+    /restore `
+    /t:Publish `
+    /p:Configuration=Release `
+    /p:Platform=x64 `
+    /p:RuntimeIdentifier=win-x64 `
+    /p:SelfContained=true `
+    /p:WindowsAppSDKSelfContained=true `
+    /p:EnableMsixTooling=false `
+    /p:PublishDir=$out\
 
 $exe = Join-Path $out "Fragaria.exe"
 if (Test-Path $exe) {
