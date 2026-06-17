@@ -17,7 +17,12 @@ public sealed class WindowPickerControl : UserControl
         {
             SelectionMode = ListViewSelectionMode.Single,
             CanDragItems = true,
-            AllowDrop = false
+            AllowDrop = false,
+            MaxHeight = 120,
+            Background = new SolidColorBrush(Windows.UI.Color.FromArgb(255, 18, 18, 22)),
+            CornerRadius = new CornerRadius(6),
+            BorderBrush = new SolidColorBrush(Windows.UI.Color.FromArgb(40, 255, 255, 255)),
+            BorderThickness = new Thickness(1)
         };
         _list.ItemClick += (_, e) =>
         {
@@ -34,14 +39,15 @@ public sealed class WindowPickerControl : UserControl
         };
         Content = new StackPanel
         {
-            Spacing = 8,
+            Spacing = 6,
             Children =
             {
                 new TextBlock
                 {
-                    Text = "Перетащи окно на дорожку или кликни",
+                    Text = "Перетащи на дорожку",
                     Foreground = ThemeBrushes.Muted,
-                    FontSize = 12
+                    FontSize = 10,
+                    TextAlignment = TextAlignment.Center
                 },
                 _list
             }

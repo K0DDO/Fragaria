@@ -107,43 +107,153 @@
 
     <!-- Channel strip -->
     <Style x:Key="FragariaChannelStrip" TargetType="Border">
-        <Setter Property="Width" Value="108"/>
-        <Setter Property="Background" Value="#991A1A1E"/>
-        <Setter Property="BorderBrush" Value="#44FFFFFF"/>
+        <Setter Property="Width" Value="124"/>
+        <Setter Property="MinHeight" Value="380"/>
+        <Setter Property="Background">
+            <Setter.Value>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                    <GradientStop Color="#E61C1C20" Offset="0"/>
+                    <GradientStop Color="#CC141418" Offset="1"/>
+                </LinearGradientBrush>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="BorderBrush" Value="#28FFFFFF"/>
         <Setter Property="BorderThickness" Value="1"/>
-        <Setter Property="CornerRadius" Value="8"/>
-        <Setter Property="Padding" Value="8,10"/>
+        <Setter Property="CornerRadius" Value="10"/>
+        <Setter Property="Padding" Value="10,12"/>
+    </Style>
+
+    <Style x:Key="FragariaAddSourceStrip" TargetType="Border" BasedOn="{StaticResource FragariaChannelStrip}">
+        <Setter Property="Width" Value="148"/>
+        <Setter Property="MinHeight" Value="380"/>
+    </Style>
+
+    <Style x:Key="FragariaMasterStrip" TargetType="Border" BasedOn="{StaticResource FragariaChannelStrip}">
+        <Setter Property="Width" Value="116"/>
+        <Setter Property="BorderBrush" Value="#4434C75A"/>
     </Style>
 
     <!-- Vertical fader + horizontal slider → see FragariaGlassSliders.xaml -->
 
     <!-- Routing toggle -->
+    <ControlTemplate x:Key="FragariaToggleTemplate" TargetType="ToggleButton">
+        <Grid x:Name="Root" Background="Transparent" Width="{TemplateBinding Width}" Height="{TemplateBinding Height}">
+            <Border x:Name="Bg" CornerRadius="5"
+                    Background="#FF1A1A1E"
+                    BorderBrush="#33FFFFFF" BorderThickness="1"/>
+            <ContentPresenter x:Name="Content"
+                              HorizontalAlignment="Center" VerticalAlignment="Center"
+                              Content="{TemplateBinding Content}"
+                              Foreground="{TemplateBinding Foreground}"
+                              FontSize="{TemplateBinding FontSize}"
+                              FontWeight="{TemplateBinding FontWeight}"
+                              FontFamily="{TemplateBinding FontFamily}"/>
+            <VisualStateManager.VisualStateGroups>
+                <VisualStateGroup x:Name="CommonStates">
+                    <VisualState x:Name="Normal"/>
+                    <VisualState x:Name="PointerOver">
+                        <Storyboard>
+                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Bg" Storyboard.TargetProperty="Background">
+                                <DiscreteObjectKeyFrame KeyTime="0" Value="#FF252529"/>
+                            </ObjectAnimationUsingKeyFrames>
+                        </Storyboard>
+                    </VisualState>
+                    <VisualState x:Name="Pressed"/>
+                    <VisualState x:Name="Disabled">
+                        <Storyboard>
+                            <DoubleAnimation Storyboard.TargetName="Root" Storyboard.TargetProperty="Opacity" To="0.4" Duration="0"/>
+                        </Storyboard>
+                    </VisualState>
+                </VisualStateGroup>
+                <VisualStateGroup x:Name="CheckStates">
+                    <VisualState x:Name="Unchecked"/>
+                    <VisualState x:Name="Checked">
+                        <Storyboard>
+                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Bg" Storyboard.TargetProperty="Background">
+                                <DiscreteObjectKeyFrame KeyTime="0" Value="#5534C75A"/>
+                            </ObjectAnimationUsingKeyFrames>
+                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Bg" Storyboard.TargetProperty="BorderBrush">
+                                <DiscreteObjectKeyFrame KeyTime="0" Value="#AA34C75A"/>
+                            </ObjectAnimationUsingKeyFrames>
+                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Content" Storyboard.TargetProperty="Foreground">
+                                <DiscreteObjectKeyFrame KeyTime="0" Value="#FF34C75A"/>
+                            </ObjectAnimationUsingKeyFrames>
+                        </Storyboard>
+                    </VisualState>
+                    <VisualState x:Name="Indeterminate"/>
+                </VisualStateGroup>
+            </VisualStateManager.VisualStateGroups>
+        </Grid>
+    </ControlTemplate>
+
+    <ControlTemplate x:Key="FragariaMuteToggleTemplate" TargetType="ToggleButton">
+        <Grid x:Name="Root" Background="Transparent" Width="{TemplateBinding Width}" Height="{TemplateBinding Height}">
+            <Border x:Name="Bg" CornerRadius="5"
+                    Background="#FF1A1A1E"
+                    BorderBrush="#33FFFFFF" BorderThickness="1"/>
+            <ContentPresenter x:Name="Content"
+                              HorizontalAlignment="Center" VerticalAlignment="Center"
+                              Content="{TemplateBinding Content}"
+                              Foreground="{TemplateBinding Foreground}"
+                              FontSize="{TemplateBinding FontSize}"
+                              FontWeight="{TemplateBinding FontWeight}"
+                              FontFamily="{TemplateBinding FontFamily}"/>
+            <VisualStateManager.VisualStateGroups>
+                <VisualStateGroup x:Name="CommonStates">
+                    <VisualState x:Name="Normal"/>
+                    <VisualState x:Name="PointerOver"/>
+                    <VisualState x:Name="Pressed"/>
+                    <VisualState x:Name="Disabled">
+                        <Storyboard>
+                            <DoubleAnimation Storyboard.TargetName="Root" Storyboard.TargetProperty="Opacity" To="0.4" Duration="0"/>
+                        </Storyboard>
+                    </VisualState>
+                </VisualStateGroup>
+                <VisualStateGroup x:Name="CheckStates">
+                    <VisualState x:Name="Unchecked"/>
+                    <VisualState x:Name="Checked">
+                        <Storyboard>
+                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Bg" Storyboard.TargetProperty="Background">
+                                <DiscreteObjectKeyFrame KeyTime="0" Value="#55B8203A"/>
+                            </ObjectAnimationUsingKeyFrames>
+                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Bg" Storyboard.TargetProperty="BorderBrush">
+                                <DiscreteObjectKeyFrame KeyTime="0" Value="#AAB8203A"/>
+                            </ObjectAnimationUsingKeyFrames>
+                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Content" Storyboard.TargetProperty="Foreground">
+                                <DiscreteObjectKeyFrame KeyTime="0" Value="#FFB8203A"/>
+                            </ObjectAnimationUsingKeyFrames>
+                        </Storyboard>
+                    </VisualState>
+                    <VisualState x:Name="Indeterminate"/>
+                </VisualStateGroup>
+            </VisualStateManager.VisualStateGroups>
+        </Grid>
+    </ControlTemplate>
+
     <Style x:Key="FragariaRoutingToggle" TargetType="ToggleButton">
-        <Setter Property="Width" Value="28"/>
-        <Setter Property="Height" Value="22"/>
+        <Setter Property="Width" Value="26"/>
+        <Setter Property="Height" Value="24"/>
         <Setter Property="FontSize" Value="9"/>
         <Setter Property="FontFamily" Value="{StaticResource FragariaFontMono}"/>
         <Setter Property="FontWeight" Value="SemiBold"/>
         <Setter Property="Foreground" Value="{StaticResource FragariaMutedBrush}"/>
-        <Setter Property="Background" Value="#FF1A1A1E"/>
-        <Setter Property="BorderBrush" Value="#44FFFFFF"/>
-        <Setter Property="BorderThickness" Value="1"/>
-        <Setter Property="CornerRadius" Value="4"/>
         <Setter Property="Padding" Value="0"/>
+        <Setter Property="Template" Value="{StaticResource FragariaToggleTemplate}"/>
     </Style>
 
-    <!-- Strip action button (S, M, Mono) -->
+    <!-- Strip action button (Solo, Mute) -->
     <Style x:Key="FragariaStripBtn" TargetType="ToggleButton">
-        <Setter Property="Width" Value="28"/>
-        <Setter Property="Height" Value="22"/>
-        <Setter Property="FontSize" Value="10"/>
+        <Setter Property="Width" Value="36"/>
+        <Setter Property="Height" Value="24"/>
+        <Setter Property="FontSize" Value="9"/>
         <Setter Property="FontFamily" Value="{StaticResource FragariaFontMono}"/>
         <Setter Property="FontWeight" Value="Bold"/>
         <Setter Property="Foreground" Value="{StaticResource FragariaMutedBrush}"/>
-        <Setter Property="Background" Value="#FF1A1A1E"/>
-        <Setter Property="BorderBrush" Value="#33FFFFFF"/>
-        <Setter Property="BorderThickness" Value="1"/>
-        <Setter Property="CornerRadius" Value="4"/>
+        <Setter Property="Template" Value="{StaticResource FragariaToggleTemplate}"/>
+    </Style>
+
+    <Style x:Key="FragariaMuteBtn" TargetType="ToggleButton" BasedOn="{StaticResource FragariaStripBtn}">
+        <Setter Property="Template" Value="{StaticResource FragariaMuteToggleTemplate}"/>
     </Style>
 
     <!-- Footer nav -->

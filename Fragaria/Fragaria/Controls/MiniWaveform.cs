@@ -1,3 +1,4 @@
+using Fragaria.Services;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
@@ -15,12 +16,17 @@ public sealed class MiniWaveform : UserControl
     {
         _line = new Polyline
         {
-            Stroke = (Brush)Application.Current.Resources["FragariaLeafBrush"],
+            Stroke = ThemeBrushes.Leaf,
             StrokeThickness = 1.5,
             Fill = null
         };
 
-        _canvas = new Canvas { Width = 88, Height = 28, Background = new SolidColorBrush(Windows.UI.Color.FromArgb(40, 0, 0, 0)) };
+        _canvas = new Canvas
+        {
+            Width = 96,
+            Height = 24,
+            Background = new SolidColorBrush(Windows.UI.Color.FromArgb(48, 0, 0, 0))
+        };
         _canvas.Children.Add(_line);
         Content = _canvas;
     }
