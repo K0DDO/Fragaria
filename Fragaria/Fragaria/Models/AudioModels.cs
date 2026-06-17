@@ -131,12 +131,20 @@ public sealed class ObsSettings
     public string Password { get; set; } = "";
     public bool MuteOnStreamScene { get; set; } = true;
     public string StreamSceneName { get; set; } = "Live";
+    public bool AutoConnect { get; set; } = true;
+    public Dictionary<string, string> ScenePresetMap { get; set; } = new()
+    {
+        ["Live"] = "Стрим",
+        ["Gaming"] = "Игра",
+        ["Talking"] = "Разговор"
+    };
 }
 
 public sealed class RecordingSettings
 {
     public bool RecordHeadphones { get; set; }
     public bool RecordStream { get; set; }
+    public bool RecordStrips { get; set; } = true;
     public string OutputFolder { get; set; } = "";
 }
 
@@ -151,6 +159,9 @@ public sealed class VirtualDriverSettings
 
 public sealed class AppSettings
 {
+    public bool SetupCompleted { get; set; }
+    public int SampleRate { get; set; } = 48000;
+    public int BufferMs { get; set; } = 256;
     public string HeadphonesDeviceId { get; set; } = "";
     public string StreamDeviceId { get; set; } = "";
     public string MicrophoneDeviceId { get; set; } = "";

@@ -232,8 +232,9 @@
                                     <StackPanel Spacing="6" HorizontalAlignment="Center">
                                         <TextBlock Text="B2" Foreground="{StaticResource FragariaRoseBrush}" FontWeight="Bold" FontSize="13" TextAlignment="Center"/>
                                         <TextBlock Text="MUSIC BUS" Style="{StaticResource FragariaLabel}" TextAlignment="Center"/>
-                                        <Slider Style="{StaticResource FragariaVerticalFader}" IsEnabled="False" Opacity="0.35" Value="70"/>
-                                        <ToggleButton Content="SEL" Style="{StaticResource FragariaStripBtn}" IsEnabled="False" Opacity="0.4"/>
+                                        <Slider x:Name="MasterMusicSlider" Style="{StaticResource FragariaVerticalFader}"
+                                                Value="70" ValueChanged="Master_Changed"/>
+                                        <ToggleButton Content="SEL" Style="{StaticResource FragariaStripBtn}" IsChecked="True"/>
                                     </StackPanel>
                                 </Border>
                             </StackPanel>
@@ -350,6 +351,11 @@
                                 <ToggleSwitch x:Name="AutoStartToggle" Header="Launch at Windows startup"/>
                                 <ToggleSwitch x:Name="TrayToggle" Header="Minimize to system tray" IsOn="True"/>
                                 <ToggleSwitch x:Name="ObsToggle" Header="OBS WebSocket integration"/>
+                                <TextBlock Text="AUDIO DEVICES" Style="{StaticResource FragariaSectionTitle}"/>
+                                <ComboBox x:Name="SettingsHpCombo" Header="A2 Monitor" Width="400" DisplayMemberPath="Name"/>
+                                <ComboBox x:Name="SettingsStreamCombo" Header="A1 Stream" Width="400" DisplayMemberPath="Name"/>
+                                <ComboBox x:Name="SettingsMicCombo" Header="Microphone" Width="400" DisplayMemberPath="Name"/>
+                                <Button Content="Apply devices" Style="{StaticResource FragariaGhostBtn}" Click="ApplyDevices_Click"/>
                                 <TextBlock Text="ENGINE" Style="{StaticResource FragariaSectionTitle}"/>
                                 <ComboBox Header="Sample Rate" SelectedIndex="0" Width="200">
                                     <ComboBoxItem Content="48000 Hz"/>

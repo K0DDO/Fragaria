@@ -79,13 +79,16 @@ public sealed class MixerEngine : IDisposable
     private DynamicsCompressor _streamBusComp = new(new CompressorSettings());
     private BusRecorder? _recorder;
     private AppSettings _settings = new();
+    private System.Timers.Timer? _mixTimer;
     private float[] _workBuffer = Array.Empty<float>();
     private float[] _hpMix = Array.Empty<float>();
     private float[] _streamMix = Array.Empty<float>();
     private bool _disposed;
 
-    public MasterBus Headphones { get; } = new() { Name = "Наушники (A)" };
-    public MasterBus Stream { get; } = new() { Name = "Стрим (B)" };
+    public MasterBus Headphones { get; } = new() { Name = "A2 Monitor" };
+    public MasterBus Stream { get; } = new() { Name = "A1 Stream" };
+    public MasterBus Record { get; } = new() { Name = "B1 Record" };
+    public MasterBus Music { get; } = new() { Name = "B2 Music" };
     public AudioStrip Microphone { get; } = new()
     {
         Id = "mic",
@@ -103,6 +106,8 @@ public sealed class MixerEngine : IDisposable
 
     public float DuckingGain => _ducking.CurrentGain;
     public bool IsRecording => _recorder?.IsRecording ?? false;
+    public bool AudioReady { get; private set; }
+    public string? StartError { get; private set; }
 
     public IReadOnlyList<AudioStrip> WindowStrips =>
         _channels.Values.Select(c => c.Strip).OrderBy(s => s.Title).ToList();
@@ -117,28 +122,53 @@ public sealed class MixerEngine : IDisposable
     public void Start(AppSettings settings)
     {
         _settings = settings;
-        _noiseGate = new NoiseGate(settings.NoiseGate);
-        _ducking = new DuckingProcessor(settings.Ducking);
-        _recorder = new BusRecorder(settings.Recording);
-
-        var vdm = new VirtualDriverManager(settings.VirtualDriver);
-        var hpId = settings.HeadphonesDeviceId;
-        var stId = settings.StreamDeviceId;
-        if (settings.VirtualDriver.UseFragariaDevices)
+        AudioReady = false;
+        StartError = null;
+        _mixTimer?.Stop();
+        _mixTimer?.Dispose();
+        _mixTimer = null;
+        try
         {
-            hpId ??= vdm.ResolveDeviceId(settings.VirtualDriver.HeadphonesDeviceName, NAudio.CoreAudioApi.DataFlow.Render) ?? "";
-            stId ??= vdm.ResolveDeviceId(settings.VirtualDriver.StreamDeviceName, NAudio.CoreAudioApi.DataFlow.Render) ?? "";
+            _noiseGate = new NoiseGate(settings.NoiseGate, settings.SampleRate);
+            _ducking = new DuckingProcessor(settings.Ducking);
+            _recorder = new BusRecorder(settings.Recording, settings.SampleRate);
+
+            var vdm = new VirtualDriverManager(settings.VirtualDriver);
+            var hpId = string.IsNullOrEmpty(settings.HeadphonesDeviceId) ? null : settings.HeadphonesDeviceId;
+            var stId = string.IsNullOrEmpty(settings.StreamDeviceId) ? null : settings.StreamDeviceId;
+            if (settings.VirtualDriver.UseFragariaDevices)
+            {
+                hpId ??= vdm.ResolveDeviceId(settings.VirtualDriver.HeadphonesDeviceName, NAudio.CoreAudioApi.DataFlow.Render);
+                stId ??= vdm.ResolveDeviceId(settings.VirtualDriver.StreamDeviceName, NAudio.CoreAudioApi.DataFlow.Render);
+            }
+
+            _headphones.Start(hpId);
+            _stream.Start(stId);
+            _mic.Start(string.IsNullOrEmpty(settings.MicrophoneDeviceId) ? null : settings.MicrophoneDeviceId);
+            _scanTimer.Start();
+            ScanWindows();
+
+            AudioReady = _headphones.IsRunning || _stream.IsRunning || _mic.IsRunning;
+
+            var mixTimer = new System.Timers.Timer(Math.Max(10, settings.BufferMs / 4)) { AutoReset = true };
+            mixTimer.Elapsed += (_, _) => MixFrame();
+            mixTimer.Start();
+            _mixTimer = mixTimer;
+            AppLogger.Info($"MixerEngine started (audio ready: {AudioReady})");
         }
+        catch (Exception ex)
+        {
+            StartError = ex.Message;
+            AppLogger.Error("MixerEngine.Start failed", ex);
+        }
+    }
 
-        _headphones.Start(hpId);
-        _stream.Start(stId);
-        _mic.Start(settings.MicrophoneDeviceId);
-        _scanTimer.Start();
-        ScanWindows();
-
-        var mixTimer = new System.Timers.Timer(20) { AutoReset = true };
-        mixTimer.Elapsed += (_, _) => MixFrame();
-        mixTimer.Start();
+    public void Restart(AppSettings settings)
+    {
+        _mic.Stop();
+        _headphones.Stop();
+        _stream.Stop();
+        Start(settings);
     }
 
     public void ScanWindows()
@@ -201,7 +231,12 @@ public sealed class MixerEngine : IDisposable
 
     public IReadOnlyList<WindowInfo> GetAvailableWindows() => _windows.GetAudibleWindows();
 
-    public void StartRecording() => _recorder?.Start();
+    public void StartRecording()
+    {
+        var strips = new List<AudioStrip> { Microphone };
+        strips.AddRange(WindowStrips);
+        _recorder?.Start(strips);
+    }
     public void StopRecording() => _recorder?.Stop();
 
     public void ApplyScene(ScenePreset scene)
@@ -213,12 +248,20 @@ public sealed class MixerEngine : IDisposable
     public void OnObsScene(string sceneName, ObsSettings obs)
     {
         if (!obs.Enabled) return;
+        ObsSceneApplied?.Invoke(sceneName);
+
+        if (obs.ScenePresetMap.TryGetValue(sceneName, out var presetName))
+        {
+            var preset = new SettingsService().LoadPreset(presetName);
+            ApplyPreset(preset);
+            ObsSceneApplied?.Invoke($"preset:{presetName}");
+        }
+
         if (obs.MuteOnStreamScene && sceneName.Equals(obs.StreamSceneName, StringComparison.OrdinalIgnoreCase))
         {
             foreach (var ch in _channels.Values)
                 if (ch.Strip.Duckable) ch.Strip.Muted = false;
         }
-        ObsSceneApplied?.Invoke(sceneName);
     }
 
     private byte[]? _micBuffer;
@@ -240,8 +283,9 @@ public sealed class MixerEngine : IDisposable
             Array.Clear(_streamMix);
 
             float micPeakRaw = 0;
+            var anySolo = Microphone.Solo || _channels.Values.Any(c => c.Strip.Solo);
 
-            if (_micBuffer != null && _micCount > 0)
+            if (_micBuffer != null && _micCount > 0 && (!anySolo || Microphone.Solo))
             {
                 CopyToWork(_micBuffer, _micCount);
                 _noiseGate.Process(_workBuffer);
@@ -263,15 +307,23 @@ public sealed class MixerEngine : IDisposable
             foreach (var ch in _channels.Values)
             {
                 if (ch.LatestBuffer == null || ch.LatestCount == 0) continue;
+                if (anySolo && !ch.Strip.Solo) continue;
+
                 CopyToWork(ch.LatestBuffer, ch.LatestCount);
                 ch.Dsp.Process(_workBuffer, ch.Strip);
 
                 var duck = ch.Strip.Duckable ? _ducking.CurrentGain : 1f;
                 var hpGain = ch.Strip.EffectiveHeadphones * Headphones.Effective * duck;
                 var stGain = ch.Strip.EffectiveStream * Stream.Effective * duck;
+                var musicGain = stGain * Music.Effective;
 
                 AudioMath.MixAdd(_hpMix, _workBuffer, hpGain);
                 AudioMath.MixAdd(_streamMix, _workBuffer, stGain);
+                if (Music.Effective > 0)
+                    AudioMath.MixAdd(_streamMix, _workBuffer, musicGain * 0.5f);
+
+                if (_recorder?.IsRecording == true)
+                    _recorder.WriteStrip(ch.Strip.Id, FloatBytes(_workBuffer));
 
                 ch.Analyzer.Analyze(_workBuffer);
                 Array.Copy(ch.Analyzer.Bands, ch.Strip.Spectrum, 32);
@@ -286,6 +338,8 @@ public sealed class MixerEngine : IDisposable
 
             Headphones.Peak = AudioMath.ComputePeak(_hpMix);
             Stream.Peak = AudioMath.ComputePeak(_streamMix);
+            Record.Peak = Stream.Peak;
+            Music.Peak = Stream.Peak * Music.Effective;
             _hpFft.Analyze(_hpMix);
             _streamFft.Analyze(_streamMix);
             Array.Copy(_hpFft.Bands, Headphones.Spectrum, 32);
@@ -391,6 +445,8 @@ public sealed class MixerEngine : IDisposable
         _disposed = true;
         _scanTimer.Stop();
         _scanTimer.Dispose();
+        _mixTimer?.Stop();
+        _mixTimer?.Dispose();
         foreach (var ch in _channels.Values) ch.Dispose();
         _channels.Clear();
         _mic.Dispose();

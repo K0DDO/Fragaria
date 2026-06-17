@@ -1,12 +1,12 @@
 ; Fragaria Windows Installer — Inno Setup 6
-; Сборка: build-installer.bat (на Windows)
 
 #define MyAppName "Fragaria"
 #define MyAppVersion "1.0.0"
 #define MyAppPublisher "Fragaria"
-#define MyAppURL "https://github.com"
+#define MyAppURL "https://github.com/K0DDO/Fragaria"
 #define MyAppExeName "Fragaria.exe"
 #define PublishDir "..\dist\Fragaria"
+#define RedistDir "redist"
 
 [Setup]
 AppId={{F8A3C2E1-9B4D-4F6A-8E2C-1D5B7A9C3E4F}
@@ -20,10 +20,8 @@ AppUpdatesURL={#MyAppURL}
 DefaultDirName={autopf}\{#MyAppName}
 DefaultGroupName={#MyAppName}
 AllowNoIcons=yes
-LicenseFile=
 OutputDir=..\dist
 OutputBaseFilename=FragariaSetup
-SetupIconFile=
 Compression=lzma2/ultra64
 SolidCompression=yes
 WizardStyle=modern
@@ -35,7 +33,7 @@ DisableProgramGroupPage=yes
 UninstallDisplayIcon={app}\{#MyAppExeName}
 VersionInfoVersion=1.0.0.0
 VersionInfoCompany={#MyAppPublisher}
-VersionInfoDescription=Fragaria — виртуальный аудио-микшер
+VersionInfoDescription=Fragaria — virtual audio mixer
 VersionInfoProductName={#MyAppName}
 VersionInfoProductVersion={#MyAppVersion}
 
@@ -45,11 +43,15 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 
 [Tasks]
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon,'Fragaria'}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
+Name: "installvcredist"; Description: "Установить Microsoft Visual C++ 2015–2022 Redistributable (x64)"; GroupDescription: "Зависимости:"; Flags: checkedonce
+Name: "installwebview"; Description: "Установить Microsoft Edge WebView2 Runtime (нужен для WinUI)"; GroupDescription: "Зависимости:"; Flags: checkedonce
 Name: "launchafter"; Description: "Запустить Fragaria после установки"; GroupDescription: "Дополнительно:"; Flags: checkedonce
 Name: "autostart"; Description: "Запускать Fragaria при входе в Windows"; GroupDescription: "Дополнительно:"; Flags: unchecked
 
 [Files]
 Source: "{#PublishDir}\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "{#RedistDir}\vc_redist.x64.exe"; DestDir: "{tmp}"; Flags: deleteafterinstall; Tasks: installvcredist; Check: VcRedistNeeded
+Source: "{#RedistDir}\MicrosoftEdgeWebview2Setup.exe"; DestDir: "{tmp}"; Flags: deleteafterinstall; Tasks: installwebview; Check: WebView2Needed
 
 [Icons]
 Name: "{group}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
@@ -57,14 +59,29 @@ Name: "{group}\Удалить {#MyAppName}"; Filename: "{uninstallexe}"
 Name: "{autodesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: desktopicon
 
 [Run]
+Filename: "{tmp}\vc_redist.x64.exe"; Parameters: "/install /quiet /norestart"; StatusMsg: "Установка Visual C++ Redistributable..."; Flags: waituntilterminated; Tasks: installvcredist; Check: VcRedistNeeded
+Filename: "{tmp}\MicrosoftEdgeWebview2Setup.exe"; Parameters: "/silent /install"; StatusMsg: "Установка WebView2 Runtime..."; Flags: waituntilterminated; Tasks: installwebview; Check: WebView2Needed
 Filename: "{app}\{#MyAppExeName}"; Description: "Запустить {#MyAppName}"; Flags: nowait postinstall skipifsilent; Tasks: launchafter
 
 [Registry]
-Root: HKCU; Subkey: "Software\Microsoft\Windows\CurrentVersion\Run"; ValueType: string; ValueName: "Fragaria"; ValueData: """{app}\{#MyAppExeName}"" --minimized"; Flags: uninsdeletevalue; Tasks: autostart
+Root: HKCU; Subkey: "Software\Microsoft\Windows\CurrentVersion\Run"; ValueType: string; ValueName: "Fragaria"; ValueData: """{app}\{#MyAppExeName}"""; Flags: uninsdeletevalue; Tasks: autostart
 
 [Code]
-function InitializeSetup(): Boolean;
+function WebView2Needed: Boolean;
+var
+  Version: String;
 begin
+  if RegQueryStringValue(HKLM, 'SOFTWARE\WOW6432Node\Microsoft\EdgeUpdate\Clients\{F3017226-FE2A-4295-8BDF-00C3A9A7E4C5}', 'pv', Version) then
+    Result := False
+  else if RegQueryStringValue(HKLM, 'SOFTWARE\Microsoft\EdgeUpdate\Clients\{F3017226-FE2A-4295-8BDF-00C3A9A7E4C5}', 'pv', Version) then
+    Result := False
+  else
+    Result := True;
+end;
+
+function VcRedistNeeded: Boolean;
+begin
+  { Always offer — installer is idempotent }
   Result := True;
 end;
 
@@ -72,7 +89,6 @@ procedure CurStepChanged(CurStep: TSetupStep);
 begin
   if CurStep = ssPostInstall then
   begin
-    { Создаём папку для пресетов и записей }
     ForceDirectories(ExpandConstant('{userappdata}\Fragaria\presets'));
     ForceDirectories(ExpandConstant('{userappdata}\Fragaria\recordings'));
   end;

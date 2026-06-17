@@ -17,9 +17,12 @@
     <DisableMrtCoreCompilation>true</DisableMrtCoreCompilation>
     <EnableCoreMrtTooling>false</EnableCoreMrtTooling>
     <EnableWindowsForms>true</EnableWindowsForms>
+    <EnableDefaultApplicationDefinition>false</EnableDefaultApplicationDefinition>
+    <WindowsAppSDKBootstrapAutoInitializeOptions>None</WindowsAppSDKBootstrapAutoInitializeOptions>
     <PublishReadyToRun>true</PublishReadyToRun>
     <WindowsSdkPackageVersion>10.0.26100.38</WindowsSdkPackageVersion>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <LangVersion>13</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>
@@ -33,6 +36,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="..\presets\**" Link="presets\%(RecursiveDir)%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
     <Content Include="Assets\**" />
   </ItemGroup>
 </Project>

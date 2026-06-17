@@ -64,6 +64,19 @@ public sealed class SettingsService
         File.WriteAllText(path, JsonSerializer.Serialize(preset, JsonOptions));
     }
 
+    public void EnsureBundledPresets(string? installPresetsDir)
+    {
+        EnsureDir();
+        Directory.CreateDirectory(PresetsDir);
+        if (string.IsNullOrEmpty(installPresetsDir) || !Directory.Exists(installPresetsDir)) return;
+        foreach (var file in Directory.GetFiles(installPresetsDir, "*.json"))
+        {
+            var dest = Path.Combine(PresetsDir, Path.GetFileName(file));
+            if (!File.Exists(dest))
+                File.Copy(file, dest);
+        }
+    }
+
     private static void EnsureDir() => Directory.CreateDirectory(Dir);
 
     private static readonly JsonSerializerOptions JsonOptions = new() { WriteIndented = true };

@@ -8,6 +8,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Media;
+using NAudio.CoreAudioApi;
 using System.Diagnostics;
 using System.Linq;
 using WinRT.Interop;
@@ -28,6 +29,7 @@ public sealed partial class MainWindow : Window
     private readonly DispatcherTimer _clockTimer;
     private DateTime _lastCpuCheck = DateTime.UtcNow;
     private TimeSpan _lastCpuTime;
+    private bool _initialized;
 
     public MainWindow()
     {
@@ -80,16 +82,118 @@ public sealed partial class MainWindow : Window
         };
 
         WireEffectsSliders();
+        PopulateDeviceCombos();
 
-        _vm.StartEngine();
-        _vm.RefreshStrips();
-        RefreshWindowPicker();
-
-        SetupTray();
-        SetupHotkeys();
-        SetupObs();
+        Activated += async (_, _) =>
+        {
+            if (_initialized) return;
+            _initialized = true;
+            await InitializeAppAsync();
+        };
 
         Closed += (_, _) => Cleanup();
+    }
+
+    private async Task InitializeAppAsync()
+    {
+        try
+        {
+            var installDir = Path.GetDirectoryName(Environment.ProcessPath);
+            _vm.SeedFromInstallDir(installDir);
+            foreach (var p in _vm.Presets)
+                if (!PresetCombo.Items.Contains(p)) PresetCombo.Items.Add(p);
+
+            if (!_vm.Settings.SetupCompleted)
+                await ShowSetupWizardAsync();
+
+            _vm.StartEngine();
+            _vm.RefreshStrips();
+            RefreshWindowPicker();
+
+            SetupTray();
+            try { SetupHotkeys(); } catch (Exception ex) { AppLogger.Error("Hotkeys failed", ex); }
+            try { SetupObs(); } catch (Exception ex) { AppLogger.Error("OBS setup failed", ex); }
+
+            if (!_vm.AudioReady)
+                StatusText.Text = "Аудио ограничено — откройте Settings";
+        }
+        catch (Exception ex)
+        {
+            AppLogger.Error("InitializeAppAsync failed", ex);
+            StatusText.Text = "Ошибка запуска — см. fragaria.log";
+            await ShowErrorDialogAsync(ex);
+        }
+    }
+
+    private async Task ShowSetupWizardAsync()
+    {
+        var hp = new ComboBox { Header = "A2 Monitor (наушники)", Width = 420 };
+        var st = new ComboBox { Header = "A1 Stream (виртуальный выход)", Width = 420 };
+        var mic = new ComboBox { Header = "Микрофон", Width = 420 };
+        foreach (var d in AudioDeviceService.ListDevices(NAudio.CoreAudioApi.DataFlow.Render))
+            hp.Items.Add(d);
+        foreach (var d in AudioDeviceService.ListDevices(NAudio.CoreAudioApi.DataFlow.Render))
+            st.Items.Add(d);
+        foreach (var d in AudioDeviceService.ListDevices(NAudio.CoreAudioApi.DataFlow.Capture))
+            mic.Items.Add(d);
+        if (hp.Items.Count > 0) hp.SelectedIndex = 0;
+        if (st.Items.Count > 0) st.SelectedIndex = Math.Min(1, st.Items.Count - 1);
+        if (mic.Items.Count > 0) mic.SelectedIndex = 0;
+
+        var panel = new StackPanel { Spacing = 12 };
+        panel.Children.Add(new TextBlock
+        {
+            Text = "Добро пожаловать в Fragaria! Выберите аудиоустройства.",
+            TextWrapping = TextWrapping.Wrap
+        });
+        panel.Children.Add(hp);
+        panel.Children.Add(st);
+        panel.Children.Add(mic);
+        panel.Children.Add(new TextBlock
+        {
+            Text = "Совет: для OBS установите VB-Cable и выберите CABLE Input как Stream.",
+            TextWrapping = TextWrapping.Wrap,
+            Opacity = 0.7
+        });
+
+        var dlg = new ContentDialog
+        {
+            Title = "Первый запуск",
+            Content = panel,
+            PrimaryButtonText = "Продолжить",
+            XamlRoot = Content.XamlRoot
+        };
+        await dlg.ShowAsync();
+        _vm.CompleteSetup(
+            (hp.SelectedItem as AudioDeviceInfo)?.Id,
+            (st.SelectedItem as AudioDeviceInfo)?.Id,
+            (mic.SelectedItem as AudioDeviceInfo)?.Id);
+    }
+
+    private async Task ShowErrorDialogAsync(Exception ex)
+    {
+        var dlg = new ContentDialog
+        {
+            Title = "Fragaria — ошибка",
+            Content = $"{ex.Message}\n\nЛог: {AppLogger.LogFilePath}",
+            CloseButtonText = "OK",
+            XamlRoot = Content.XamlRoot
+        };
+        await dlg.ShowAsync();
+    }
+
+    private void PopulateDeviceCombos()
+    {
+        SettingsHpCombo.Items.Clear();
+        SettingsStreamCombo.Items.Clear();
+        SettingsMicCombo.Items.Clear();
+        foreach (var d in AudioDeviceService.ListDevices(NAudio.CoreAudioApi.DataFlow.Render))
+        {
+            SettingsHpCombo.Items.Add(d);
+            SettingsStreamCombo.Items.Add(d);
+        }
+        foreach (var d in AudioDeviceService.ListDevices(NAudio.CoreAudioApi.DataFlow.Capture))
+            SettingsMicCombo.Items.Add(d);
     }
 
     private void ConfigureWindow()
@@ -138,10 +242,17 @@ public sealed partial class MainWindow : Window
 
     private void SetupTray()
     {
-        _tray = new TrayService();
-        _tray.OpenRequested += () => DispatcherQueue.TryEnqueue(() => { AppWindow.Show(); Activate(); });
-        _tray.ExitRequested += () => DispatcherQueue.TryEnqueue(Close);
-        _tray.ShowBalloon("Fragaria", "Pro Audio for Streamers");
+        try
+        {
+            _tray = new TrayService();
+            _tray.OpenRequested += () => DispatcherQueue.TryEnqueue(() => { AppWindow.Show(); Activate(); });
+            _tray.ExitRequested += () => DispatcherQueue.TryEnqueue(Close);
+            _tray.ShowBalloon("Fragaria", "Pro Audio for Streamers");
+        }
+        catch (Exception ex)
+        {
+            AppLogger.Error("Tray setup failed", ex);
+        }
     }
 
     private void SetupHotkeys()
@@ -166,7 +277,7 @@ public sealed partial class MainWindow : Window
             _engine.OnObsScene(scene, _vm.Settings.Obs);
             StatusText.Text = $"OBS: {scene}";
         });
-        if (_vm.ObsEnabled) _ = _obs.ConnectAsync();
+        if (_vm.ObsEnabled || _vm.Settings.Obs.AutoConnect) _ = _obs.ConnectAsync();
     }
 
     private void RefreshWindowPicker() =>
@@ -223,6 +334,8 @@ public sealed partial class MainWindow : Window
         _vm.MasterStream = MasterStreamSlider.Value;
         _vm.MasterHpLimit = MasterHpLimitSlider.Value;
         _vm.MasterStreamLimit = MasterStreamLimitSlider.Value;
+        if (MasterMusicSlider != null)
+            _vm.MasterMusic = MasterMusicSlider.Value;
     }
 
     private void LoadPreset_Click(object sender, RoutedEventArgs e)
@@ -254,6 +367,16 @@ public sealed partial class MainWindow : Window
     {
         if (i < _vm.Scenes.Count)
             _vm.ApplySceneCommand.Execute(_vm.Scenes[i]);
+    }
+
+    private void ApplyDevices_Click(object sender, RoutedEventArgs e)
+    {
+        _vm.CompleteSetup(
+            (SettingsHpCombo.SelectedItem as AudioDeviceInfo)?.Id,
+            (SettingsStreamCombo.SelectedItem as AudioDeviceInfo)?.Id,
+            (SettingsMicCombo.SelectedItem as AudioDeviceInfo)?.Id);
+        _vm.RestartEngine();
+        StatusText.Text = "Устройства применены";
     }
 
     private void NavMixer_Click(object sender, RoutedEventArgs e) => ShowPage(MixerPage, NavMixer);

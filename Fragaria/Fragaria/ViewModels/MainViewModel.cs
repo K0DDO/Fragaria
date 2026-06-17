@@ -46,25 +46,25 @@ public sealed partial class StripViewModel : ObservableObject
     public string ProcessName { get; }
     public bool IsMicrophone { get; }
 
-    [ObservableProperty] private double _headphonesPercent;
-    [ObservableProperty] private double _streamPercent;
-    [ObservableProperty] private double _headphonesLimitPercent;
-    [ObservableProperty] private double _streamLimitPercent;
-    [ObservableProperty] private bool _muted;
-    [ObservableProperty] private bool _duckable = true;
-    [ObservableProperty] private bool _routeA1 = true;
-    [ObservableProperty] private bool _routeA2 = true;
-    [ObservableProperty] private bool _solo;
-    [ObservableProperty] private double _gateLevel = 50;
-    [ObservableProperty] private double _compLevel = 60;
-    [ObservableProperty] private double _peakHp;
-    [ObservableProperty] private double _peakStream;
-    [ObservableProperty] private double _eqLow;
-    [ObservableProperty] private double _eqMid;
-    [ObservableProperty] private double _eqHigh;
-    [ObservableProperty] private double _compThreshold = -12;
-    [ObservableProperty] private double _compRatio = 4;
-    [ObservableProperty] private BitmapImage? _icon;
+    [ObservableProperty] public partial double HeadphonesPercent { get; set; }
+    [ObservableProperty] public partial double StreamPercent { get; set; }
+    [ObservableProperty] public partial double HeadphonesLimitPercent { get; set; }
+    [ObservableProperty] public partial double StreamLimitPercent { get; set; }
+    [ObservableProperty] public partial bool Muted { get; set; }
+    [ObservableProperty] public partial bool Duckable { get; set; }
+    [ObservableProperty] public partial bool RouteA1 { get; set; }
+    [ObservableProperty] public partial bool RouteA2 { get; set; }
+    [ObservableProperty] public partial bool Solo { get; set; }
+    [ObservableProperty] public partial double GateLevel { get; set; }
+    [ObservableProperty] public partial double CompLevel { get; set; }
+    [ObservableProperty] public partial double PeakHp { get; set; }
+    [ObservableProperty] public partial double PeakStream { get; set; }
+    [ObservableProperty] public partial double EqLow { get; set; }
+    [ObservableProperty] public partial double EqMid { get; set; }
+    [ObservableProperty] public partial double EqHigh { get; set; }
+    [ObservableProperty] public partial double CompThreshold { get; set; }
+    [ObservableProperty] public partial double CompRatio { get; set; }
+    [ObservableProperty] public partial BitmapImage? Icon { get; set; }
     public float[] Spectrum { get; } = new float[32];
 
     partial void OnHeadphonesPercentChanged(double value) { _strip.HeadphonesVolume = (float)(value / 100); _onChanged(); }
@@ -86,6 +86,7 @@ public sealed partial class StripViewModel : ObservableObject
     partial void OnRouteA1Changed(bool value) { _strip.RouteStream = value; _onChanged(); }
     partial void OnRouteA2Changed(bool value) { _strip.RouteHeadphones = value; _onChanged(); }
     partial void OnSoloChanged(bool value) { _strip.Solo = value; _onChanged(); }
+    partial void OnGateLevelChanged(double value) => _onChanged();
     partial void OnEqLowChanged(double value) { _strip.Eq.LowDb = (float)value; _onChanged(); }
     partial void OnEqMidChanged(double value) { _strip.Eq.MidDb = (float)value; _onChanged(); }
     partial void OnEqHighChanged(double value) { _strip.Eq.HighDb = (float)value; _onChanged(); }
@@ -139,6 +140,7 @@ public sealed partial class MainViewModel : ObservableObject
         ObsHost = Settings.Obs.Host;
         RecordHeadphones = Settings.Recording.RecordHeadphones;
         RecordStream = Settings.Recording.RecordStream;
+        MasterMusic = _engine.Music.Volume * 100;
 
         _engine.StripsChanged += RefreshStrips;
         _engine.LevelsUpdated += OnLevelsUpdated;
@@ -155,8 +157,11 @@ public sealed partial class MainViewModel : ObservableObject
     [ObservableProperty] private double _masterStream = 100;
     [ObservableProperty] private double _masterHpLimit = 100;
     [ObservableProperty] private double _masterStreamLimit = 100;
+    [ObservableProperty] private double _masterMusic = 70;
     [ObservableProperty] private double _masterHpPeak;
     [ObservableProperty] private double _masterStreamPeak;
+    [ObservableProperty] private double _masterRecordPeak;
+    [ObservableProperty] private double _masterMusicPeak;
     [ObservableProperty] private bool _autoStart;
     [ObservableProperty] private bool _minimizeToTray = true;
     [ObservableProperty] private bool _noiseGateEnabled;
@@ -171,20 +176,48 @@ public sealed partial class MainViewModel : ObservableObject
     [ObservableProperty] private bool _isRecording;
     [ObservableProperty] private string _statusMessage = "";
     [ObservableProperty] private double _duckingGain = 100;
+    [ObservableProperty] private bool _audioReady;
     public float[] HpSpectrum { get; } = new float[32];
     public float[] StreamSpectrum { get; } = new float[32];
 
-    public void StartEngine() => _engine.Start(Settings);
+    public void SeedFromInstallDir(string? installDir)
+    {
+        if (string.IsNullOrEmpty(installDir)) return;
+        _settingsService.EnsureBundledPresets(Path.Combine(installDir, "presets"));
+        Presets = _settingsService.ListPresets().ToList();
+    }
+
+    public void StartEngine()
+    {
+        _engine.Start(Settings);
+        AudioReady = _engine.AudioReady;
+        StatusMessage = _engine.StartError ?? (_engine.AudioReady ? "Аудио готово" : "Аудио: проверьте устройства в Settings");
+    }
+
+    public void RestartEngine()
+    {
+        _engine.Restart(Settings);
+        AudioReady = _engine.AudioReady;
+        StatusMessage = _engine.StartError ?? "Устройства обновлены";
+    }
 
     public void RefreshStrips()
     {
         _dispatcher.TryEnqueue(() =>
         {
             Strips.Clear();
-            Strips.Add(new StripViewModel(_engine.Microphone, () => { }));
+            Strips.Add(new StripViewModel(_engine.Microphone, OnMicStripChanged));
             foreach (var strip in _engine.WindowStrips)
                 Strips.Add(new StripViewModel(strip, () => { }));
         });
+    }
+
+    private void OnMicStripChanged()
+    {
+        var vm = Strips.FirstOrDefault(s => s.IsMicrophone);
+        if (vm == null) return;
+        Settings.NoiseGate.Threshold = (float)Math.Clamp(vm.GateLevel / 500.0, 0.001, 0.15);
+        SaveSettings();
     }
 
     private void OnLevelsUpdated()
@@ -193,6 +226,8 @@ public sealed partial class MainViewModel : ObservableObject
         {
             MasterHpPeak = _engine.Headphones.Peak * 100;
             MasterStreamPeak = _engine.Stream.Peak * 100;
+            MasterRecordPeak = _engine.Record.Peak * 100;
+            MasterMusicPeak = _engine.Music.Peak * 100;
             DuckingGain = _engine.DuckingGain * 100;
             Array.Copy(_engine.Headphones.Spectrum, HpSpectrum, 32);
             Array.Copy(_engine.Stream.Spectrum, StreamSpectrum, 32);
@@ -216,6 +251,7 @@ public sealed partial class MainViewModel : ObservableObject
     partial void OnMasterStreamChanged(double value) => _engine.Stream.Volume = (float)(value / 100);
     partial void OnMasterHpLimitChanged(double value) => _engine.Headphones.Limit = (float)(value / 100);
     partial void OnMasterStreamLimitChanged(double value) => _engine.Stream.Limit = (float)(value / 100);
+    partial void OnMasterMusicChanged(double value) => _engine.Music.Volume = (float)(value / 100);
 
     partial void OnNoiseGateEnabledChanged(bool value) { Settings.NoiseGate.Enabled = value; SaveSettings(); }
     partial void OnNoiseGateThresholdChanged(double value) { Settings.NoiseGate.Threshold = (float)(value / 100); SaveSettings(); }
@@ -229,6 +265,15 @@ public sealed partial class MainViewModel : ObservableObject
     {
         AutoStartService.SetEnabled(value);
         Settings.AutoStart = value;
+        SaveSettings();
+    }
+
+    public void CompleteSetup(string? hpId, string? streamId, string? micId)
+    {
+        Settings.HeadphonesDeviceId = hpId ?? "";
+        Settings.StreamDeviceId = streamId ?? "";
+        Settings.MicrophoneDeviceId = micId ?? "";
+        Settings.SetupCompleted = true;
         SaveSettings();
     }
 
@@ -285,5 +330,5 @@ public sealed partial class MainViewModel : ObservableObject
 
     public IReadOnlyList<WindowInfo> GetWindows() => _engine.GetAvailableWindows();
 
-    private void SaveSettings() => _settingsService.Save(Settings);
+    public void SaveSettings() => _settingsService.Save(Settings);
 }
