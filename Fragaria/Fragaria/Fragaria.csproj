@@ -17,8 +17,6 @@
     <DisableMrtCoreCompilation>true</DisableMrtCoreCompilation>
     <EnableCoreMrtTooling>false</EnableCoreMrtTooling>
     <EnableWindowsForms>true</EnableWindowsForms>
-    <EnableDefaultApplicationDefinition>false</EnableDefaultApplicationDefinition>
-    <WindowsAppSDKBootstrapAutoInitializeOptions>None</WindowsAppSDKBootstrapAutoInitializeOptions>
     <PublishReadyToRun>true</PublishReadyToRun>
     <WindowsSdkPackageVersion>10.0.26100.38</WindowsSdkPackageVersion>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
