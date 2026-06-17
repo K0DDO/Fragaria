@@ -1,0 +1,32 @@
+<Project>
+  <!-- WinUI unpackaged publish omits .pri/.xbf unless copied explicitly -->
+  <Target Name="CopyWinUiResourcesToPublish" AfterTargets="Publish">
+    <PropertyGroup>
+      <_PublishOut Condition="'$(PublishDir)' != ''">$([MSBuild]::EnsureTrailingSlash('$(PublishDir)'))</_PublishOut>
+      <_PublishOut Condition="'$(_PublishOut)' == ''">$([MSBuild]::EnsureTrailingSlash('$(OutputPath)'))</_PublishOut>
+    </PropertyGroup>
+
+    <Copy
+      SourceFiles="$(OutputPath)$(AssemblyName).pri"
+      DestinationFolder="$(_PublishOut)"
+      SkipUnchangedFiles="true"
+      Condition="Exists('$(OutputPath)$(AssemblyName).pri')" />
+
+    <ItemGroup>
+      <_PublishXbf Include="$(OutputPath)**\*.xbf" />
+      <_PublishXaml Include="$(OutputPath)**\*.xaml" />
+    </ItemGroup>
+
+    <Copy
+      SourceFiles="@(_PublishXbf)"
+      DestinationFiles="@(_PublishXbf->'$(_PublishOut)%(RecursiveDir)%(Filename)%(Extension)')"
+      SkipUnchangedFiles="true"
+      Condition="'@(_PublishXbf)' != ''" />
+
+    <Copy
+      SourceFiles="@(_PublishXaml)"
+      DestinationFiles="@(_PublishXaml->'$(_PublishOut)%(RecursiveDir)%(Filename)%(Extension)')"
+      SkipUnchangedFiles="true"
+      Condition="'@(_PublishXaml)' != ''" />
+  </Target>
+</Project>
