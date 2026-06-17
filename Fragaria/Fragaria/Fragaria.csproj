@@ -22,7 +22,7 @@
     <PublishReadyToRun>true</PublishReadyToRun>
     <WindowsSdkPackageVersion>10.0.26100.38</WindowsSdkPackageVersion>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <LangVersion>13</LangVersion>
+    <NoWarn>$(NoWarn);MVVMTK0045</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>

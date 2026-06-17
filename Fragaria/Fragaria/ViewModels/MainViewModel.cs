@@ -46,25 +46,25 @@ public sealed partial class StripViewModel : ObservableObject
     public string ProcessName { get; }
     public bool IsMicrophone { get; }
 
-    [ObservableProperty] public partial double HeadphonesPercent { get; set; }
-    [ObservableProperty] public partial double StreamPercent { get; set; }
-    [ObservableProperty] public partial double HeadphonesLimitPercent { get; set; }
-    [ObservableProperty] public partial double StreamLimitPercent { get; set; }
-    [ObservableProperty] public partial bool Muted { get; set; }
-    [ObservableProperty] public partial bool Duckable { get; set; }
-    [ObservableProperty] public partial bool RouteA1 { get; set; }
-    [ObservableProperty] public partial bool RouteA2 { get; set; }
-    [ObservableProperty] public partial bool Solo { get; set; }
-    [ObservableProperty] public partial double GateLevel { get; set; }
-    [ObservableProperty] public partial double CompLevel { get; set; }
-    [ObservableProperty] public partial double PeakHp { get; set; }
-    [ObservableProperty] public partial double PeakStream { get; set; }
-    [ObservableProperty] public partial double EqLow { get; set; }
-    [ObservableProperty] public partial double EqMid { get; set; }
-    [ObservableProperty] public partial double EqHigh { get; set; }
-    [ObservableProperty] public partial double CompThreshold { get; set; }
-    [ObservableProperty] public partial double CompRatio { get; set; }
-    [ObservableProperty] public partial BitmapImage? Icon { get; set; }
+    [ObservableProperty] private double _headphonesPercent;
+    [ObservableProperty] private double _streamPercent;
+    [ObservableProperty] private double _headphonesLimitPercent;
+    [ObservableProperty] private double _streamLimitPercent;
+    [ObservableProperty] private bool _muted;
+    [ObservableProperty] private bool _duckable = true;
+    [ObservableProperty] private bool _routeA1 = true;
+    [ObservableProperty] private bool _routeA2 = true;
+    [ObservableProperty] private bool _solo;
+    [ObservableProperty] private double _gateLevel = 50;
+    [ObservableProperty] private double _compLevel = 60;
+    [ObservableProperty] private double _peakHp;
+    [ObservableProperty] private double _peakStream;
+    [ObservableProperty] private double _eqLow;
+    [ObservableProperty] private double _eqMid;
+    [ObservableProperty] private double _eqHigh;
+    [ObservableProperty] private double _compThreshold = -12;
+    [ObservableProperty] private double _compRatio = 4;
+    [ObservableProperty] private BitmapImage? _icon;
     public float[] Spectrum { get; } = new float[32];
 
     partial void OnHeadphonesPercentChanged(double value) { _strip.HeadphonesVolume = (float)(value / 100); _onChanged(); }
