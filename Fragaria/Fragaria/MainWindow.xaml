@@ -5,7 +5,7 @@
     xmlns:controls="using:Fragaria.Controls"
     Title="Fragaria">
 
-    <Grid Background="{StaticResource FragariaBgBrush}">
+    <Grid Background="#FF1A1A1E">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
@@ -13,36 +13,35 @@
         </Grid.RowDefinitions>
 
         <!-- ═══ HEADER ═══ -->
-        <Border Grid.Row="0" Background="{StaticResource FragariaHeaderGradient}" Padding="24,16" BorderBrush="#22B8203A" BorderThickness="0,0,0,1">
+        <Border Grid.Row="0" Background="{StaticResource FragariaHeaderGradient}" Padding="28,18" BorderBrush="#33B8203A" BorderThickness="0,0,0,1">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
 
-                <StackPanel Orientation="Horizontal" Spacing="14">
-                    <Border Width="40" Height="40" CornerRadius="20"
+                <StackPanel Orientation="Horizontal" Spacing="16">
+                    <Border Width="44" Height="44" CornerRadius="22"
                             BorderBrush="{StaticResource FragariaPrimaryBrush}" BorderThickness="2"
-                            Background="#33B8203A">
+                            Background="#40B8203A">
                         <FontIcon Glyph="&#xE735;" Foreground="{StaticResource FragariaPrimaryBrush}"
-                                  FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                  FontSize="22" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                     </Border>
-                    <StackPanel VerticalAlignment="Center" Spacing="2">
+                    <StackPanel VerticalAlignment="Center" Spacing="3">
                         <TextBlock Text="FRAGARIA" Style="{StaticResource FragariaWordmark}"/>
-                        <TextBlock Text="Pro Audio for Streamers"
-                                   Style="{StaticResource FragariaLabel}" Foreground="{StaticResource FragariaRoseBrush}"/>
+                        <TextBlock Text="Pro Audio for Streamers" Style="{StaticResource FragariaTagline}"/>
                     </StackPanel>
                 </StackPanel>
 
-                <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
-                    <TextBlock x:Name="StatusText" Style="{StaticResource FragariaMono}"
-                               VerticalAlignment="Center" Margin="0,0,8,0"/>
-                    <TextBlock Text="48 kHz · 24-bit · v1.0.0" Style="{StaticResource FragariaMono}"
+                <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="12" VerticalAlignment="Center">
+                    <TextBlock x:Name="StatusText" Style="{StaticResource FragariaStatus}"
+                               VerticalAlignment="Center" Margin="0,0,4,0"/>
+                    <TextBlock Text="48 kHz · 24-bit" Style="{StaticResource FragariaMono}"
                                VerticalAlignment="Center"/>
-                    <ComboBox x:Name="PresetCombo" Width="140" PlaceholderText="Preset"/>
-                    <Button Content="LOAD" Style="{StaticResource FragariaGhostBtn}" Click="LoadPreset_Click"/>
-                    <Button Content="SAVE" Style="{StaticResource FragariaGhostBtn}" Click="SavePreset_Click"/>
-                    <Button x:Name="RecordBtn" Content="REC" Style="{StaticResource FragariaPrimaryBtn}" Click="Record_Click"/>
+                    <ComboBox x:Name="PresetCombo" Width="150" PlaceholderText="Пресет" FontSize="12"/>
+                    <Button Content="Загрузить" Style="{StaticResource FragariaGhostBtn}" Click="LoadPreset_Click"/>
+                    <Button Content="Сохранить" Style="{StaticResource FragariaGhostBtn}" Click="SavePreset_Click"/>
+                    <Button x:Name="RecordBtn" Content="● ЗАПИСЬ" Style="{StaticResource FragariaPrimaryBtn}" Click="Record_Click"/>
                 </StackPanel>
             </Grid>
         </Border>
@@ -59,13 +58,13 @@
                 </Grid.RowDefinitions>
 
                 <!-- Scene presets bar -->
-                <Border Grid.Row="0" Style="{StaticResource FragariaGlassPanel}" Padding="12,10" Margin="0,0,0,10">
-                    <StackPanel Orientation="Horizontal" Spacing="10">
-                        <TextBlock Text="SCENES" Style="{StaticResource FragariaSectionTitle}" VerticalAlignment="Center" Margin="0,0,4,0"/>
-                        <Button x:Name="SceneGameBtn" Content="GAMING" Style="{StaticResource FragariaGhostBtn}" Click="SceneGame_Click" Padding="14,6"/>
-                        <Button x:Name="SceneTalkBtn" Content="VOICE" Style="{StaticResource FragariaGhostBtn}" Click="SceneTalk_Click" Padding="14,6"/>
-                        <Button x:Name="SceneStreamBtn" Content="BROADCAST" Style="{StaticResource FragariaGhostBtn}" Click="SceneStream_Click" Padding="14,6"/>
-                        <Rectangle Width="1" Height="20" Fill="#33FFFFFF" Margin="8,0"/>
+                <Border Grid.Row="0" Style="{StaticResource FragariaGlassPanel}" Padding="14,12" Margin="0,0,0,12">
+                    <StackPanel Orientation="Horizontal" Spacing="12">
+                        <TextBlock Text="СЦЕНЫ" Style="{StaticResource FragariaSectionAccent}" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                        <Button x:Name="SceneGameBtn" Content="Игра" Style="{StaticResource FragariaGhostBtn}" Click="SceneGame_Click"/>
+                        <Button x:Name="SceneTalkBtn" Content="Голос" Style="{StaticResource FragariaGhostBtn}" Click="SceneTalk_Click"/>
+                        <Button x:Name="SceneStreamBtn" Content="Эфир" Style="{StaticResource FragariaGhostBtn}" Click="SceneStream_Click"/>
+                        <Rectangle Width="1" Height="24" Fill="#40FFFFFF" Margin="8,0"/>
                         <TextBlock x:Name="DuckingLabel" Style="{StaticResource FragariaMono}" Foreground="{StaticResource FragariaLeafBrush}" VerticalAlignment="Center"/>
                         <TextBlock x:Name="ObsStatus" Style="{StaticResource FragariaMono}" Foreground="{StaticResource FragariaStreamBrush}" VerticalAlignment="Center"/>
                     </StackPanel>
@@ -76,8 +75,8 @@
                     <StackPanel Orientation="Horizontal" Spacing="10">
 
                         <!-- Input section -->
-                        <StackPanel Spacing="6">
-                            <TextBlock Text="HARDWARE INPUTS" Style="{StaticResource FragariaSectionTitle}" Margin="4,0,0,0"/>
+                        <StackPanel Spacing="8">
+                            <TextBlock Text="ВХОДЫ" Style="{StaticResource FragariaSectionAccent}" Margin="6,0,0,0"/>
                             <StackPanel Orientation="Horizontal" Spacing="8">
                                 <ItemsControl x:Name="StripsList">
                                     <ItemsControl.ItemsPanel>
@@ -90,27 +89,23 @@
                                                       xmlns:viewmodels="using:Fragaria.ViewModels">
                                             <Border Style="{StaticResource FragariaChannelStrip}"
                                                     AllowDrop="True" DragOver="Strip_DragOver" Drop="Strip_Drop">
-                                                <StackPanel Spacing="8">
+                                                <StackPanel Spacing="10">
                                                     <!-- Header -->
-                                                    <StackPanel Spacing="4" HorizontalAlignment="Center">
-                                                        <Border Width="32" Height="32" CornerRadius="16"
-                                                                Background="#33B8203A" BorderBrush="#55B8203A" BorderThickness="1"
+                                                    <StackPanel Spacing="5" HorizontalAlignment="Center">
+                                                        <Border Width="36" Height="36" CornerRadius="18"
+                                                                Background="#40B8203A" BorderBrush="#66B8203A" BorderThickness="1"
                                                                 HorizontalAlignment="Center">
-                                                            <Image Source="{x:Bind Icon}" Width="18" Height="18"
+                                                            <Image Source="{x:Bind Icon}" Width="20" Height="20"
                                                                    HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                                         </Border>
-                                                        <TextBlock Text="{x:Bind Title}" Foreground="{StaticResource FragariaTextBrush}"
-                                                                   FontSize="11" FontWeight="SemiBold" TextAlignment="Center"
-                                                                   TextTrimming="CharacterEllipsis" MaxWidth="100"/>
-                                                        <TextBlock Text="{x:Bind ProcessName}" Style="{StaticResource FragariaLabel}"
-                                                                   FontSize="9" TextAlignment="Center"
-                                                                   TextTrimming="CharacterEllipsis" MaxWidth="100"/>
+                                                        <TextBlock Text="{x:Bind Title}" Style="{StaticResource FragariaStripTitle}"/>
+                                                        <TextBlock Text="{x:Bind ProcessName}" Style="{StaticResource FragariaStripSub}"/>
                                                     </StackPanel>
 
                                                     <controls:MiniWaveform HorizontalAlignment="Center"/>
 
                                                     <!-- Dynamics -->
-                                                    <Grid ColumnSpacing="6" HorizontalAlignment="Center">
+                                                    <Grid ColumnSpacing="8" HorizontalAlignment="Center">
                                                         <Grid.ColumnDefinitions>
                                                             <ColumnDefinition Width="Auto"/>
                                                             <ColumnDefinition Width="Auto"/>
@@ -122,7 +117,7 @@
                                                     </Grid>
 
                                                     <!-- Fader + meter -->
-                                                    <Grid ColumnSpacing="6" HorizontalAlignment="Center">
+                                                    <Grid ColumnSpacing="8" HorizontalAlignment="Center">
                                                         <Grid.ColumnDefinitions>
                                                             <ColumnDefinition Width="Auto"/>
                                                             <ColumnDefinition Width="Auto"/>
@@ -133,10 +128,9 @@
                                                     </Grid>
 
                                                     <!-- Routing -->
-                                                    <StackPanel Spacing="4">
-                                                        <TextBlock Text="ROUTE" Style="{StaticResource FragariaLabel}"
-                                                                   FontSize="8" CharacterSpacing="100" TextAlignment="Center"/>
-                                                        <Grid ColumnSpacing="4" HorizontalAlignment="Center">
+                                                    <StackPanel Spacing="5">
+                                                        <TextBlock Text="МАРШРУТ" Style="{StaticResource FragariaMicroLabel}"/>
+                                                        <Grid ColumnSpacing="5" HorizontalAlignment="Center">
                                                             <Grid.ColumnDefinitions>
                                                                 <ColumnDefinition Width="Auto"/>
                                                                 <ColumnDefinition Width="Auto"/>
@@ -153,7 +147,7 @@
                                                     </StackPanel>
 
                                                     <!-- Solo / Mute -->
-                                                    <Grid ColumnSpacing="6" HorizontalAlignment="Center">
+                                                    <Grid ColumnSpacing="8" HorizontalAlignment="Center">
                                                         <Grid.ColumnDefinitions>
                                                             <ColumnDefinition Width="Auto"/>
                                                             <ColumnDefinition Width="Auto"/>
@@ -171,12 +165,12 @@
 
                                 <!-- Add source -->
                                 <Border Style="{StaticResource FragariaAddSourceStrip}">
-                                    <StackPanel Spacing="10" VerticalAlignment="Stretch">
-                                        <Border Background="#22B8203A" CornerRadius="6" Padding="8,6" HorizontalAlignment="Center">
-                                            <TextBlock Text="＋ ADD SOURCE" Style="{StaticResource FragariaSectionTitle}" TextAlignment="Center"/>
+                                    <StackPanel Spacing="12" VerticalAlignment="Stretch">
+                                        <Border Background="#30B8203A" CornerRadius="8" Padding="10,8" HorizontalAlignment="Stretch">
+                                            <TextBlock Text="+ Добавить источник" Style="{StaticResource FragariaSectionTitle}" TextAlignment="Center"/>
                                         </Border>
                                         <controls:WindowPickerControl x:Name="WindowPicker"/>
-                                        <Button Content="SCAN WINDOWS" Style="{StaticResource FragariaGhostBtn}" Click="Rescan_Click" HorizontalAlignment="Stretch"/>
+                                        <Button Content="Сканировать окна" Style="{StaticResource FragariaGhostBtn}" Click="Rescan_Click" HorizontalAlignment="Stretch"/>
                                     </StackPanel>
                                 </Border>
                             </StackPanel>
@@ -185,16 +179,16 @@
                         <Rectangle Width="1" Fill="#22FFFFFF" Margin="4,20"/>
 
                         <!-- Master section -->
-                        <StackPanel Spacing="6">
-                            <TextBlock Text="MASTER OUTPUT" Style="{StaticResource FragariaSectionTitle}" Margin="4,0,0,0"/>
+                        <StackPanel Spacing="8">
+                            <TextBlock Text="МАСТЕР" Style="{StaticResource FragariaSectionAccent}" Margin="6,0,0,0"/>
                             <StackPanel Orientation="Horizontal" Spacing="8">
                                 <!-- A1 Stream -->
                                 <Border Style="{StaticResource FragariaMasterStrip}">
                                     <StackPanel Spacing="8" HorizontalAlignment="Center">
-                                        <Border Background="#2234C75A" CornerRadius="4" Padding="8,4" HorizontalAlignment="Center">
-                                            <TextBlock Text="A1" Foreground="{StaticResource FragariaLeafBrush}" FontWeight="Bold" FontSize="14"/>
+                                        <Border Background="#2834C75A" CornerRadius="6" Padding="10,5" HorizontalAlignment="Center">
+                                            <TextBlock Text="A1" Style="{StaticResource FragariaBusBadge}" Foreground="{StaticResource FragariaLeafBrush}"/>
                                         </Border>
-                                        <TextBlock Text="STREAM" Style="{StaticResource FragariaLabel}" TextAlignment="Center"/>
+                                        <TextBlock Text="Стрим" Style="{StaticResource FragariaLabel}" TextAlignment="Center"/>
                                         <Grid ColumnSpacing="6">
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition Width="Auto"/>
@@ -203,17 +197,17 @@
                                             <Slider Grid.Column="0" x:Name="MasterStreamSlider" Style="{StaticResource FragariaVerticalFader}" ValueChanged="Master_Changed"/>
                                             <controls:VerticalLedMeter x:Name="MasterStreamMeter" Grid.Column="1" Level="0"/>
                                         </Grid>
-                                        <Slider x:Name="MasterStreamLimitSlider" Header="LIMIT" Style="{StaticResource FragariaSlider}" ValueChanged="Master_Changed" Maximum="100"/>
+                                        <Slider x:Name="MasterStreamLimitSlider" Header="Лимит" Style="{StaticResource FragariaSlider}" ValueChanged="Master_Changed" Maximum="100"/>
                                         <controls:SpectrumMeter x:Name="MasterStreamSpectrum" Width="88" Height="28"/>
                                     </StackPanel>
                                 </Border>
                                 <!-- A2 Monitor -->
                                 <Border Style="{StaticResource FragariaMasterStrip}">
                                     <StackPanel Spacing="8" HorizontalAlignment="Center">
-                                        <Border Background="#2234C75A" CornerRadius="4" Padding="8,4" HorizontalAlignment="Center">
-                                            <TextBlock Text="A2" Foreground="{StaticResource FragariaLeafBrush}" FontWeight="Bold" FontSize="14"/>
+                                        <Border Background="#2834C75A" CornerRadius="6" Padding="10,5" HorizontalAlignment="Center">
+                                            <TextBlock Text="A2" Style="{StaticResource FragariaBusBadge}" Foreground="{StaticResource FragariaLeafBrush}"/>
                                         </Border>
-                                        <TextBlock Text="MONITOR" Style="{StaticResource FragariaLabel}" TextAlignment="Center"/>
+                                        <TextBlock Text="Монитор" Style="{StaticResource FragariaLabel}" TextAlignment="Center"/>
                                         <Grid ColumnSpacing="6">
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition Width="Auto"/>
@@ -222,33 +216,33 @@
                                             <Slider Grid.Column="0" x:Name="MasterHpSlider" Style="{StaticResource FragariaVerticalFader}" ValueChanged="Master_Changed"/>
                                             <controls:VerticalLedMeter x:Name="MasterHpMeter" Grid.Column="1" Level="0"/>
                                         </Grid>
-                                        <Slider x:Name="MasterHpLimitSlider" Header="LIMIT" Style="{StaticResource FragariaSlider}" ValueChanged="Master_Changed" Maximum="100"/>
+                                        <Slider x:Name="MasterHpLimitSlider" Header="Лимит" Style="{StaticResource FragariaSlider}" ValueChanged="Master_Changed" Maximum="100"/>
                                         <controls:SpectrumMeter x:Name="MasterHpSpectrum" Width="88" Height="28"/>
                                     </StackPanel>
                                 </Border>
                                 <!-- B1 Record -->
                                 <Border Style="{StaticResource FragariaMasterStrip}">
                                     <StackPanel Spacing="8" HorizontalAlignment="Center">
-                                        <Border Background="#33B8203A" CornerRadius="4" Padding="8,4" HorizontalAlignment="Center">
-                                            <TextBlock Text="B1" Foreground="{StaticResource FragariaRoseBrush}" FontWeight="Bold" FontSize="14"/>
+                                        <Border Background="#38B8203A" CornerRadius="6" Padding="10,5" HorizontalAlignment="Center">
+                                            <TextBlock Text="B1" Style="{StaticResource FragariaBusBadge}" Foreground="{StaticResource FragariaRoseBrush}"/>
                                         </Border>
-                                        <TextBlock Text="RECORD" Style="{StaticResource FragariaLabel}" TextAlignment="Center"/>
+                                        <TextBlock Text="Запись" Style="{StaticResource FragariaLabel}" TextAlignment="Center"/>
                                         <Border Width="36" Height="156" CornerRadius="8" HorizontalAlignment="Center"
                                                 Background="{StaticResource FragariaLiquidTrackBrush}"
                                                 BorderBrush="{StaticResource FragariaLiquidTrackRim}" BorderThickness="1">
-                                            <TextBlock x:Name="RecordIndicator" Text="OFF" Style="{StaticResource FragariaLabel}"
+                                            <TextBlock x:Name="RecordIndicator" Text="ВЫКЛ" Style="{StaticResource FragariaLabel}"
                                                        HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                         </Border>
-                                        <Button x:Name="RecordBusToggle" Content="ARM REC" Style="{StaticResource FragariaPrimaryBtn}" Click="Record_Click" FontSize="9" Padding="8,4"/>
+                                        <Button x:Name="RecordBusToggle" Content="Включить запись" Style="{StaticResource FragariaPrimaryBtn}" Click="Record_Click" FontSize="11"/>
                                     </StackPanel>
                                 </Border>
                                 <!-- B2 Music -->
                                 <Border Style="{StaticResource FragariaMasterStrip}">
                                     <StackPanel Spacing="8" HorizontalAlignment="Center">
-                                        <Border Background="#33B8203A" CornerRadius="4" Padding="8,4" HorizontalAlignment="Center">
-                                            <TextBlock Text="B2" Foreground="{StaticResource FragariaRoseBrush}" FontWeight="Bold" FontSize="14"/>
+                                        <Border Background="#38B8203A" CornerRadius="6" Padding="10,5" HorizontalAlignment="Center">
+                                            <TextBlock Text="B2" Style="{StaticResource FragariaBusBadge}" Foreground="{StaticResource FragariaRoseBrush}"/>
                                         </Border>
-                                        <TextBlock Text="MUSIC" Style="{StaticResource FragariaLabel}" TextAlignment="Center"/>
+                                        <TextBlock Text="Музыка" Style="{StaticResource FragariaLabel}" TextAlignment="Center"/>
                                         <Slider x:Name="MasterMusicSlider" Style="{StaticResource FragariaVerticalFader}" Value="70" ValueChanged="Master_Changed"/>
                                     </StackPanel>
                                 </Border>
@@ -258,11 +252,11 @@
                 </ScrollViewer>
 
                 <!-- Routing summary -->
-                <Border Grid.Row="2" Style="{StaticResource FragariaGlassPanel}" Padding="12,8" Margin="0,8,0,0">
-                    <StackPanel Orientation="Horizontal" Spacing="16">
-                        <TextBlock Text="ROUTING MATRIX" Style="{StaticResource FragariaSectionTitle}" VerticalAlignment="Center"/>
-                        <TextBlock Text="A1 → Stream · A2 → Monitor · Mic → A1+A2 · Apps → per-strip"
-                                   Style="{StaticResource FragariaMono}" VerticalAlignment="Center"/>
+                <Border Grid.Row="2" Style="{StaticResource FragariaGlassPanel}" Padding="14,10" Margin="0,10,0,0">
+                    <StackPanel Orientation="Horizontal" Spacing="20">
+                        <TextBlock Text="МАРШРУТИЗАЦИЯ" Style="{StaticResource FragariaSectionAccent}" VerticalAlignment="Center"/>
+                        <TextBlock Text="A1 → Стрим  ·  A2 → Монитор  ·  Микрофон → A1+A2  ·  Приложения → по дорожкам"
+                                   Style="{StaticResource FragariaBody}" Foreground="{StaticResource FragariaCaptionBrush}" VerticalAlignment="Center"/>
                     </StackPanel>
                 </Border>
             </Grid>
@@ -393,15 +387,15 @@
         </Grid>
 
         <!-- ═══ FOOTER NAV ═══ -->
-        <Border Grid.Row="2" Background="#E6141418" BorderBrush="#33B8203A" BorderThickness="0,1,0,0" Padding="16,8">
+        <Border Grid.Row="2" Background="#F0141418" BorderBrush="#40B8203A" BorderThickness="0,1,0,0" Padding="20,10">
             <Grid>
-                <StackPanel Orientation="Horizontal" Spacing="4">
-                    <Button x:Name="NavMixer" Content="MIXER" Style="{StaticResource FragariaNavBtnActive}" Click="NavMixer_Click"/>
-                    <Button x:Name="NavRouting" Content="ROUTING" Style="{StaticResource FragariaNavBtn}" Click="NavRouting_Click"/>
-                    <Button x:Name="NavEffects" Content="EFFECTS" Style="{StaticResource FragariaNavBtn}" Click="NavEffects_Click"/>
-                    <Button x:Name="NavSettings" Content="SETTINGS" Style="{StaticResource FragariaNavBtn}" Click="NavSettings_Click"/>
+                <StackPanel Orientation="Horizontal" Spacing="2">
+                    <Button x:Name="NavMixer" Content="Микшер" Style="{StaticResource FragariaNavBtnActive}" Click="NavMixer_Click"/>
+                    <Button x:Name="NavRouting" Content="Маршруты" Style="{StaticResource FragariaNavBtn}" Click="NavRouting_Click"/>
+                    <Button x:Name="NavEffects" Content="Эффекты" Style="{StaticResource FragariaNavBtn}" Click="NavEffects_Click"/>
+                    <Button x:Name="NavSettings" Content="Настройки" Style="{StaticResource FragariaNavBtn}" Click="NavSettings_Click"/>
                 </StackPanel>
-                <StackPanel Orientation="Horizontal" Spacing="20" HorizontalAlignment="Right">
+                <StackPanel Orientation="Horizontal" Spacing="24" HorizontalAlignment="Right">
                     <TextBlock x:Name="CpuLabel" Text="CPU 0.0%" Style="{StaticResource FragariaMono}"/>
                     <TextBlock Text="48.0 kHz" Style="{StaticResource FragariaMono}"/>
                     <TextBlock x:Name="ClockLabel" Style="{StaticResource FragariaMono}"/>

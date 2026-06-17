@@ -309,8 +309,8 @@ public sealed partial class MainWindow : Window
         DuckingLabel.Text = $"DUCK {_vm.DuckingGain:F0}%";
         if (!string.IsNullOrEmpty(_vm.StatusMessage))
             StatusText.Text = _vm.StatusMessage;
-        RecordBtn.Content = _vm.IsRecording ? "STOP" : "REC";
-        RecordIndicator.Text = _vm.IsRecording ? "ON" : "OFF";
+        RecordBtn.Content = _vm.IsRecording ? "■ СТОП" : "● ЗАПИСЬ";
+        RecordIndicator.Text = _vm.IsRecording ? "ВКЛ" : "ВЫКЛ";
         RecordIndicator.Foreground = _vm.IsRecording
             ? (Brush)Application.Current.Resources["FragariaPrimaryBrush"]
             : (Brush)Application.Current.Resources["FragariaMutedBrush"];

@@ -17,15 +17,15 @@ public sealed class MiniWaveform : UserControl
         _line = new Polyline
         {
             Stroke = ThemeBrushes.Leaf,
-            StrokeThickness = 1.5,
+            StrokeThickness = 2,
             Fill = null
         };
 
         _canvas = new Canvas
         {
-            Width = 96,
-            Height = 24,
-            Background = new SolidColorBrush(Windows.UI.Color.FromArgb(48, 0, 0, 0))
+            Width = 100,
+            Height = 26,
+            Background = new SolidColorBrush(Windows.UI.Color.FromArgb(56, 0, 0, 0))
         };
         _canvas.Children.Add(_line);
         Content = _canvas;

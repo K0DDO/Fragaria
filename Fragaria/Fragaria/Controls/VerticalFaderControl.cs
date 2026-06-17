@@ -41,11 +41,12 @@ public sealed class VerticalFaderControl : UserControl
     {
         _label = new TextBlock
         {
-            FontSize = 9,
-            FontWeight = Microsoft.UI.Text.FontWeights.SemiBold,
-            Foreground = ThemeBrushes.Muted,
+            FontFamily = ThemeFonts.Mono,
+            FontSize = 11,
+            FontWeight = Microsoft.UI.Text.FontWeights.Bold,
+            Foreground = ThemeBrushes.Leaf,
             HorizontalAlignment = HorizontalAlignment.Center,
-            CharacterSpacing = 60
+            CharacterSpacing = 40
         };
 
         _slider = new Slider

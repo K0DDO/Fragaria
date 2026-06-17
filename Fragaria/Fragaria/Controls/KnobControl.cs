@@ -46,11 +46,12 @@ public sealed class KnobControl : UserControl
     {
         _label = new TextBlock
         {
-            FontSize = 8,
-            FontWeight = Microsoft.UI.Text.FontWeights.SemiBold,
-            Foreground = ThemeBrushes.Muted,
+            FontFamily = ThemeFonts.Mono,
+            FontSize = 10,
+            FontWeight = Microsoft.UI.Text.FontWeights.Bold,
+            Foreground = ThemeBrushes.Caption,
             HorizontalAlignment = HorizontalAlignment.Center,
-            CharacterSpacing = 80
+            CharacterSpacing = 50
         };
 
         _indicator = new Ellipse

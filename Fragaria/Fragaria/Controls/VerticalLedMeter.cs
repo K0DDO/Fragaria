@@ -25,7 +25,7 @@ public sealed class VerticalLedMeter : UserControl
     public VerticalLedMeter()
     {
         _segments = new Rectangle[SegmentCount];
-        _grid = new Grid { Width = 12, Height = 156 };
+        _grid = new Grid { Width = 14, Height = 156 };
 
         for (int i = 0; i < SegmentCount; i++)
         {

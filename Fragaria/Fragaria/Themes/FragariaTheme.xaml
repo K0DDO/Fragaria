@@ -15,8 +15,9 @@
     <Color x:Key="DeepWine">#FF5C1F22</Color>
     <Color x:Key="LeafGreen">#FF34C75A</Color>
     <Color x:Key="ForestGreen">#FF1F4F23</Color>
-    <Color x:Key="TextPrimary">#FFF0F0F2</Color>
-    <Color x:Key="TextMuted">#99A0A8B0</Color>
+    <Color x:Key="TextPrimary">#FFF2F4F8</Color>
+    <Color x:Key="TextSecondary">#FFC4CAD2</Color>
+    <Color x:Key="TextMuted">#FF949CA8</Color>
     <Color x:Key="BorderGlow">#44B8203A</Color>
     <Color x:Key="BorderGreen">#4434C75A</Color>
 
@@ -29,6 +30,7 @@
     <SolidColorBrush x:Key="FragariaLeafBrush" Color="{StaticResource LeafGreen}"/>
     <SolidColorBrush x:Key="FragariaForestBrush" Color="{StaticResource ForestGreen}"/>
     <SolidColorBrush x:Key="FragariaTextBrush" Color="{StaticResource TextPrimary}"/>
+    <SolidColorBrush x:Key="FragariaCaptionBrush" Color="{StaticResource TextSecondary}"/>
     <SolidColorBrush x:Key="FragariaMutedBrush" Color="{StaticResource TextMuted}"/>
     <SolidColorBrush x:Key="FragariaStreamBrush" Color="{StaticResource LeafGreen}"/>
 
@@ -52,41 +54,102 @@
 
   <!-- Typography -->
     <x:String x:Key="FragariaFontDisplay">Segoe UI Variable Display</x:String>
+    <x:String x:Key="FragariaFontUI">Segoe UI Variable Text</x:String>
     <x:String x:Key="FragariaFontMono">Cascadia Mono</x:String>
 
     <Style x:Key="FragariaWordmark" TargetType="TextBlock">
         <Setter Property="FontFamily" Value="{StaticResource FragariaFontDisplay}"/>
-        <Setter Property="FontSize" Value="22"/>
+        <Setter Property="FontSize" Value="24"/>
         <Setter Property="FontWeight" Value="Bold"/>
-        <Setter Property="CharacterSpacing" Value="200"/>
+        <Setter Property="CharacterSpacing" Value="120"/>
         <Setter Property="Foreground" Value="{StaticResource FragariaTextBrush}"/>
+    </Style>
+
+    <Style x:Key="FragariaTagline" TargetType="TextBlock">
+        <Setter Property="FontFamily" Value="{StaticResource FragariaFontUI}"/>
+        <Setter Property="FontSize" Value="13"/>
+        <Setter Property="FontWeight" Value="Normal"/>
+        <Setter Property="Foreground" Value="{StaticResource FragariaRoseBrush}"/>
     </Style>
 
     <Style x:Key="FragariaTitle" TargetType="TextBlock">
         <Setter Property="FontFamily" Value="{StaticResource FragariaFontDisplay}"/>
         <Setter Property="Foreground" Value="{StaticResource FragariaTextBrush}"/>
-        <Setter Property="FontSize" Value="20"/>
+        <Setter Property="FontSize" Value="18"/>
         <Setter Property="FontWeight" Value="SemiBold"/>
     </Style>
 
+    <Style x:Key="FragariaBody" TargetType="TextBlock">
+        <Setter Property="FontFamily" Value="{StaticResource FragariaFontUI}"/>
+        <Setter Property="Foreground" Value="{StaticResource FragariaTextBrush}"/>
+        <Setter Property="FontSize" Value="13"/>
+        <Setter Property="LineHeight" Value="18"/>
+    </Style>
+
     <Style x:Key="FragariaLabel" TargetType="TextBlock">
-        <Setter Property="FontFamily" Value="{StaticResource FragariaFontMono}"/>
-        <Setter Property="Foreground" Value="{StaticResource FragariaMutedBrush}"/>
-        <Setter Property="FontSize" Value="11"/>
+        <Setter Property="FontFamily" Value="{StaticResource FragariaFontUI}"/>
+        <Setter Property="Foreground" Value="{StaticResource FragariaCaptionBrush}"/>
+        <Setter Property="FontSize" Value="12"/>
     </Style>
 
     <Style x:Key="FragariaMono" TargetType="TextBlock">
         <Setter Property="FontFamily" Value="{StaticResource FragariaFontMono}"/>
-        <Setter Property="Foreground" Value="{StaticResource FragariaMutedBrush}"/>
-        <Setter Property="FontSize" Value="11"/>
+        <Setter Property="Foreground" Value="{StaticResource FragariaCaptionBrush}"/>
+        <Setter Property="FontSize" Value="12"/>
+    </Style>
+
+    <Style x:Key="FragariaStatus" TargetType="TextBlock">
+        <Setter Property="FontFamily" Value="{StaticResource FragariaFontUI}"/>
+        <Setter Property="Foreground" Value="{StaticResource FragariaTextBrush}"/>
+        <Setter Property="FontSize" Value="13"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
     </Style>
 
     <Style x:Key="FragariaSectionTitle" TargetType="TextBlock">
         <Setter Property="FontFamily" Value="{StaticResource FragariaFontDisplay}"/>
-        <Setter Property="FontSize" Value="11"/>
+        <Setter Property="FontSize" Value="12"/>
         <Setter Property="FontWeight" Value="SemiBold"/>
-        <Setter Property="CharacterSpacing" Value="80"/>
+        <Setter Property="CharacterSpacing" Value="40"/>
+        <Setter Property="Foreground" Value="{StaticResource FragariaTextBrush}"/>
+    </Style>
+
+    <Style x:Key="FragariaSectionAccent" TargetType="TextBlock" BasedOn="{StaticResource FragariaSectionTitle}">
         <Setter Property="Foreground" Value="{StaticResource FragariaRoseBrush}"/>
+    </Style>
+
+    <Style x:Key="FragariaStripTitle" TargetType="TextBlock">
+        <Setter Property="FontFamily" Value="{StaticResource FragariaFontUI}"/>
+        <Setter Property="FontSize" Value="12"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Setter Property="Foreground" Value="{StaticResource FragariaTextBrush}"/>
+        <Setter Property="TextAlignment" Value="Center"/>
+        <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
+        <Setter Property="MaxWidth" Value="108"/>
+    </Style>
+
+    <Style x:Key="FragariaStripSub" TargetType="TextBlock">
+        <Setter Property="FontFamily" Value="{StaticResource FragariaFontUI}"/>
+        <Setter Property="FontSize" Value="11"/>
+        <Setter Property="Foreground" Value="{StaticResource FragariaCaptionBrush}"/>
+        <Setter Property="TextAlignment" Value="Center"/>
+        <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
+        <Setter Property="MaxWidth" Value="108"/>
+    </Style>
+
+    <Style x:Key="FragariaMicroLabel" TargetType="TextBlock">
+        <Setter Property="FontFamily" Value="{StaticResource FragariaFontMono}"/>
+        <Setter Property="FontSize" Value="10"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Setter Property="CharacterSpacing" Value="60"/>
+        <Setter Property="Foreground" Value="{StaticResource FragariaCaptionBrush}"/>
+        <Setter Property="TextAlignment" Value="Center"/>
+    </Style>
+
+    <Style x:Key="FragariaBusBadge" TargetType="TextBlock">
+        <Setter Property="FontFamily" Value="{StaticResource FragariaFontDisplay}"/>
+        <Setter Property="FontSize" Value="15"/>
+        <Setter Property="FontWeight" Value="Bold"/>
+        <Setter Property="TextAlignment" Value="Center"/>
     </Style>
 
     <!-- Glass card -->
@@ -99,38 +162,39 @@
     </Style>
 
     <Style x:Key="FragariaGlassPanel" TargetType="Border">
-        <Setter Property="Background" Value="#B31F1F23"/>
-        <Setter Property="BorderBrush" Value="#33B8203A"/>
+        <Setter Property="Background" Value="#D918181C"/>
+        <Setter Property="BorderBrush" Value="#44B8203A"/>
         <Setter Property="BorderThickness" Value="1"/>
-        <Setter Property="CornerRadius" Value="8"/>
+        <Setter Property="CornerRadius" Value="10"/>
     </Style>
 
     <!-- Channel strip -->
     <Style x:Key="FragariaChannelStrip" TargetType="Border">
-        <Setter Property="Width" Value="124"/>
-        <Setter Property="MinHeight" Value="380"/>
+        <Setter Property="Width" Value="132"/>
+        <Setter Property="MinHeight" Value="400"/>
         <Setter Property="Background">
             <Setter.Value>
                 <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
-                    <GradientStop Color="#E61C1C20" Offset="0"/>
-                    <GradientStop Color="#CC141418" Offset="1"/>
+                    <GradientStop Color="#F0222228" Offset="0"/>
+                    <GradientStop Color="#E016161A" Offset="0.55"/>
+                    <GradientStop Color="#D0101014" Offset="1"/>
                 </LinearGradientBrush>
             </Setter.Value>
         </Setter>
-        <Setter Property="BorderBrush" Value="#28FFFFFF"/>
+        <Setter Property="BorderBrush" Value="#35FFFFFF"/>
         <Setter Property="BorderThickness" Value="1"/>
-        <Setter Property="CornerRadius" Value="10"/>
-        <Setter Property="Padding" Value="10,12"/>
+        <Setter Property="CornerRadius" Value="12"/>
+        <Setter Property="Padding" Value="12,14"/>
     </Style>
 
     <Style x:Key="FragariaAddSourceStrip" TargetType="Border" BasedOn="{StaticResource FragariaChannelStrip}">
-        <Setter Property="Width" Value="148"/>
-        <Setter Property="MinHeight" Value="380"/>
+        <Setter Property="Width" Value="160"/>
+        <Setter Property="BorderBrush" Value="#55B8203A"/>
     </Style>
 
     <Style x:Key="FragariaMasterStrip" TargetType="Border" BasedOn="{StaticResource FragariaChannelStrip}">
-        <Setter Property="Width" Value="116"/>
-        <Setter Property="BorderBrush" Value="#4434C75A"/>
+        <Setter Property="Width" Value="124"/>
+        <Setter Property="BorderBrush" Value="#5534C75A"/>
     </Style>
 
     <!-- Vertical fader + horizontal slider → see FragariaGlassSliders.xaml -->
@@ -231,24 +295,24 @@
     </ControlTemplate>
 
     <Style x:Key="FragariaRoutingToggle" TargetType="ToggleButton">
-        <Setter Property="Width" Value="26"/>
-        <Setter Property="Height" Value="24"/>
-        <Setter Property="FontSize" Value="9"/>
+        <Setter Property="Width" Value="28"/>
+        <Setter Property="Height" Value="26"/>
+        <Setter Property="FontSize" Value="10"/>
         <Setter Property="FontFamily" Value="{StaticResource FragariaFontMono}"/>
-        <Setter Property="FontWeight" Value="SemiBold"/>
-        <Setter Property="Foreground" Value="{StaticResource FragariaMutedBrush}"/>
+        <Setter Property="FontWeight" Value="Bold"/>
+        <Setter Property="Foreground" Value="{StaticResource FragariaCaptionBrush}"/>
         <Setter Property="Padding" Value="0"/>
         <Setter Property="Template" Value="{StaticResource FragariaToggleTemplate}"/>
     </Style>
 
     <!-- Strip action button (Solo, Mute) -->
     <Style x:Key="FragariaStripBtn" TargetType="ToggleButton">
-        <Setter Property="Width" Value="36"/>
-        <Setter Property="Height" Value="24"/>
-        <Setter Property="FontSize" Value="9"/>
+        <Setter Property="Width" Value="58"/>
+        <Setter Property="Height" Value="26"/>
+        <Setter Property="FontSize" Value="10"/>
         <Setter Property="FontFamily" Value="{StaticResource FragariaFontMono}"/>
         <Setter Property="FontWeight" Value="Bold"/>
-        <Setter Property="Foreground" Value="{StaticResource FragariaMutedBrush}"/>
+        <Setter Property="Foreground" Value="{StaticResource FragariaCaptionBrush}"/>
         <Setter Property="Template" Value="{StaticResource FragariaToggleTemplate}"/>
     </Style>
 
@@ -259,40 +323,51 @@
     <!-- Footer nav -->
     <Style x:Key="FragariaNavBtn" TargetType="Button">
         <Setter Property="Background" Value="Transparent"/>
-        <Setter Property="BorderThickness" Value="0"/>
-        <Setter Property="FontFamily" Value="{StaticResource FragariaFontMono}"/>
-        <Setter Property="FontSize" Value="11"/>
+        <Setter Property="BorderThickness" Value="0,0,0,2"/>
+        <Setter Property="BorderBrush" Value="Transparent"/>
+        <Setter Property="FontFamily" Value="{StaticResource FragariaFontUI}"/>
+        <Setter Property="FontSize" Value="12"/>
         <Setter Property="FontWeight" Value="SemiBold"/>
-        <Setter Property="Foreground" Value="{StaticResource FragariaMutedBrush}"/>
-        <Setter Property="Padding" Value="16,8"/>
-        <Setter Property="CornerRadius" Value="4"/>
+        <Setter Property="Foreground" Value="{StaticResource FragariaCaptionBrush}"/>
+        <Setter Property="Padding" Value="18,10"/>
+        <Setter Property="CornerRadius" Value="0"/>
     </Style>
 
     <Style x:Key="FragariaNavBtnActive" TargetType="Button" BasedOn="{StaticResource FragariaNavBtn}">
         <Setter Property="Foreground" Value="{StaticResource FragariaLeafBrush}"/>
-        <Setter Property="Background" Value="#2234C75A"/>
+        <Setter Property="BorderBrush" Value="{StaticResource FragariaLeafBrush}"/>
+        <Setter Property="Background" Value="#1834C75A"/>
     </Style>
 
     <!-- Primary action -->
     <Style x:Key="FragariaPrimaryBtn" TargetType="Button">
         <Setter Property="Background" Value="{StaticResource FragariaPrimaryBrush}"/>
         <Setter Property="Foreground" Value="White"/>
-        <Setter Property="FontFamily" Value="{StaticResource FragariaFontMono}"/>
-        <Setter Property="FontSize" Value="11"/>
+        <Setter Property="FontFamily" Value="{StaticResource FragariaFontUI}"/>
+        <Setter Property="FontSize" Value="12"/>
         <Setter Property="FontWeight" Value="SemiBold"/>
-        <Setter Property="CornerRadius" Value="6"/>
-        <Setter Property="Padding" Value="12,6"/>
+        <Setter Property="CornerRadius" Value="8"/>
+        <Setter Property="Padding" Value="14,8"/>
         <Setter Property="BorderThickness" Value="0"/>
     </Style>
 
     <Style x:Key="FragariaGhostBtn" TargetType="Button">
-        <Setter Property="Background" Value="#22FFFFFF"/>
+        <Setter Property="Background" Value="#18FFFFFF"/>
         <Setter Property="Foreground" Value="{StaticResource FragariaTextBrush}"/>
-        <Setter Property="FontFamily" Value="{StaticResource FragariaFontMono}"/>
-        <Setter Property="FontSize" Value="11"/>
-        <Setter Property="CornerRadius" Value="6"/>
-        <Setter Property="Padding" Value="10,6"/>
-        <Setter Property="BorderBrush" Value="#33FFFFFF"/>
+        <Setter Property="FontFamily" Value="{StaticResource FragariaFontUI}"/>
+        <Setter Property="FontSize" Value="12"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Setter Property="CornerRadius" Value="8"/>
+        <Setter Property="Padding" Value="12,8"/>
+        <Setter Property="BorderBrush" Value="#40FFFFFF"/>
         <Setter Property="BorderThickness" Value="1"/>
+    </Style>
+
+    <Style TargetType="ListViewItem">
+        <Setter Property="FontFamily" Value="{StaticResource FragariaFontUI}"/>
+        <Setter Property="FontSize" Value="12"/>
+        <Setter Property="Foreground" Value="{StaticResource FragariaTextBrush}"/>
+        <Setter Property="MinHeight" Value="32"/>
+        <Setter Property="Padding" Value="8,4"/>
     </Style>
 </ResourceDictionary>

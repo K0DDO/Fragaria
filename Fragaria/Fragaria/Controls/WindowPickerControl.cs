@@ -18,7 +18,7 @@ public sealed class WindowPickerControl : UserControl
             SelectionMode = ListViewSelectionMode.Single,
             CanDragItems = true,
             AllowDrop = false,
-            MaxHeight = 120,
+            MaxHeight = 140,
             Background = new SolidColorBrush(Windows.UI.Color.FromArgb(255, 18, 18, 22)),
             CornerRadius = new CornerRadius(6),
             BorderBrush = new SolidColorBrush(Windows.UI.Color.FromArgb(40, 255, 255, 255)),
@@ -44,10 +44,12 @@ public sealed class WindowPickerControl : UserControl
             {
                 new TextBlock
                 {
-                    Text = "Перетащи на дорожку",
-                    Foreground = ThemeBrushes.Muted,
-                    FontSize = 10,
-                    TextAlignment = TextAlignment.Center
+                    Text = "Перетащите окно на дорожку",
+                    FontFamily = ThemeFonts.UI,
+                    Foreground = ThemeBrushes.Caption,
+                    FontSize = 12,
+                    TextAlignment = TextAlignment.Center,
+                    TextWrapping = TextWrapping.Wrap
                 },
                 _list
             }
