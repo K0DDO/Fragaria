@@ -3,18 +3,18 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:primitives="using:Microsoft.UI.Xaml.Controls.Primitives">
 
-    <!-- Liquid glass brushes (Apple-style frosted gloss) -->
-    <AcrylicBrush x:Key="FragariaLiquidGlassBrush"
-                  BackgroundSource="Backdrop"
-                  TintColor="#FFFFFFFF"
-                  TintOpacity="0.08"
-                  FallbackColor="#55FFFFFF"/>
+    <!-- Liquid glass brushes (gradient fallback — AcrylicBrush not available in WinUI 3 XAML) -->
+    <LinearGradientBrush x:Key="FragariaLiquidGlassBrush" StartPoint="0,0" EndPoint="0,1">
+        <GradientStop Color="#A0FFFFFF" Offset="0"/>
+        <GradientStop Color="#44FFFFFF" Offset="0.45"/>
+        <GradientStop Color="#28FFFFFF" Offset="1"/>
+    </LinearGradientBrush>
 
-    <AcrylicBrush x:Key="FragariaLiquidTrackBrush"
-                  BackgroundSource="Backdrop"
-                  TintColor="#FF1F1F23"
-                  TintOpacity="0.55"
-                  FallbackColor="#CC252529"/>
+    <LinearGradientBrush x:Key="FragariaLiquidTrackBrush" StartPoint="0,0" EndPoint="0,1">
+        <GradientStop Color="#FF2E2E34" Offset="0"/>
+        <GradientStop Color="#CC1F1F23" Offset="0.5"/>
+        <GradientStop Color="#FF18181C" Offset="1"/>
+    </LinearGradientBrush>
 
     <LinearGradientBrush x:Key="FragariaLiquidSpecular" StartPoint="0,0" EndPoint="0,1">
         <GradientStop Color="#99FFFFFF" Offset="0"/>

@@ -5,13 +5,7 @@
     xmlns:controls="using:Fragaria.Controls"
     Title="Fragaria">
 
-    <Grid>
-        <Grid.Background>
-            <AcrylicBrush BackgroundSource="Backdrop"
-                          TintColor="#FF1F1F23"
-                          TintOpacity="0.82"
-                          FallbackColor="#FF1F1F23"/>
-        </Grid.Background>
+    <Grid Background="{StaticResource FragariaBgBrush}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
